@@ -1,0 +1,4490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Burger Shop — The Ultimate Burger Haven</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c0d;
+    --bg-soft:#131315;
+    --panel:#18181a;
+    --panel-2:#202023;
+    --line:rgba(235,235,238,.10);
+    --text:#f2f2f3;
+    --muted:#a2a2a7;
+    --accent:#b8b8bd;
+    --accent-2:#e2e2e5;
+    --radius:22px;
+    --shadow:0 24px 70px rgba(0,0,0,.44);
+  }
+
+  .ar-sub{
+    display:block;
+    margin-top:4px;
+    opacity:.75;
+    font-weight:600;
+  }
+  span.ar-sub,strong .ar-sub{display:inline;margin-top:0;margin-inline-start:6px;font-size:.85em}
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    min-width:320px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Manrope',sans-serif;
+    overflow-x:hidden;
+  }
+  button,a{font:inherit}
+  button{cursor:pointer}
+  img{display:block;max-width:100%}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .bg-art,.bg-wash,.grain{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+  .bg-art{z-index:-3}
+  .bg-art img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    transform:scale(1.015);
+  }
+  .bg-wash{
+    z-index:-2;
+    background:
+      radial-gradient(circle at 72% 44%,rgba(184,184,189,.12),transparent 30%),
+      linear-gradient(90deg,rgba(12,12,13,.98) 0%,rgba(12,12,13,.86) 34%,rgba(12,12,13,.42) 68%,rgba(12,12,13,.62) 100%),
+      linear-gradient(180deg,rgba(12,12,13,.48),transparent 35%,rgba(12,12,13,.96) 100%);
+  }
+  .grain{
+    z-index:-1;
+    opacity:.24;
+    background-image:radial-gradient(rgba(255,255,255,.055) 1px,transparent 1px);
+    background-size:4px 4px;
+    mix-blend-mode:overlay;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    width:min(1500px,100%);
+    margin:0 auto;
+    padding:34px clamp(22px,4vw,64px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:32px;
+    position:relative;
+    z-index:10;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-shrink:0;
+    font-family:'Anton',sans-serif;
+    font-size:18px;
+    letter-spacing:.08em;
+  }
+  .logo small{
+    display:block;
+    font-family:'Manrope',sans-serif;
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:.14em;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  .logo-badge{width:clamp(52px,6vw,80px);height:clamp(52px,6vw,80px);aspect-ratio:1/1;flex-shrink:0}
+  .logo-badge img{width:100%;height:100%;object-fit:contain}
+
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:clamp(24px,3vw,48px);
+    list-style:none;
+    margin-left:auto;
+  }
+  .nav-links a{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    color:var(--muted);
+    text-decoration:none;
+    font-size:15px;
+    font-weight:700;
+    line-height:1.3;
+    transition:color .2s ease;
+  }
+  .nav-links a .ar{
+    font-size:11px;
+    font-weight:600;
+    color:var(--muted);
+    opacity:.75;
+  }
+  .nav-links a::after{
+    content:"";
+    position:absolute;
+    left:0;bottom:-7px;
+    width:0;height:2px;
+    border-radius:10px;
+    background:var(--accent);
+    transition:width .2s ease;
+  }
+  .nav-links a:hover,
+  .nav-links a.active{color:var(--text)}
+  .nav-links a:hover::after,
+  .nav-links a.active::after{width:100%}
+
+  /* ---------- DROPDOWN MENU ---------- */
+  .nav-item{position:relative}
+  .nav-item > a{cursor:pointer}
+  
+  .dropdown-menu{
+    position:absolute;
+    top:100%;
+    left:0;
+    margin-top:12px;
+    padding:12px 0;
+    min-width:220px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    backdrop-filter:blur(18px);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-8px);
+    transition:opacity .2s ease, visibility .2s ease, transform .2s ease;
+    z-index:1000;
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
+  }
+
+  .nav-item:hover .dropdown-menu{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+  }
+
+  .nav-item.active .dropdown-menu{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+  }
+
+  .dropdown-menu a{
+    display:flex;
+    align-items:center;
+    padding:12px 20px;
+    color:var(--muted);
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    line-height:1.3;
+    transition:background .2s ease, color .2s ease;
+    border:none;
+    position:static;
+  }
+
+  .dropdown-menu a:hover{
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+  }
+
+  .dropdown-menu a::after{display:none}
+  
+  .dropdown-menu a .ar{
+    display:block;
+    font-size:11px;
+    font-weight:600;
+    color:var(--muted);
+    opacity:.65;
+    margin-left:8px;
+  }
+
+  @media (max-width:820px){
+    .dropdown-menu{
+      position:absolute;
+      top:100%;
+      left:0;
+      right:auto;
+      margin-top:8px;
+      min-width:180px;
+      max-width:none;
+      transform:translateY(-8px);
+    }
+    
+    .nav-item.active .dropdown-menu{
+      transform:translateY(0);
+    }
+  }
+
+  .nav-icons{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex-shrink:0;  }
+  .nav-icons button,.menu-toggle{
+    width:46px;height:46px;
+    border:1px solid transparent;
+    border-radius:50%;
+    background:rgba(255,255,255,.045);
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:.2s ease;
+  }
+  .nav-icons button:hover{
+    background:rgba(255,255,255,.09);
+    border-color:var(--line);
+    transform:translateY(-1px);
+  }
+  .nav-icons .filled{
+    background:var(--text);
+    color:var(--bg);
+  }
+  .menu-toggle{display:none}
+
+  @media (min-width:821px){
+    .nav-icons{display:none}
+  }
+
+  .mobile-menu{
+    display:none;
+    width:min(100% - 32px,600px);
+    margin:0 auto;
+    padding:0 14px;
+    background:rgba(14,11,9,.9);
+    border:1px solid var(--line);
+    border-radius:18px;
+    backdrop-filter:blur(18px);
+    overflow-y:auto;
+    overflow-x:hidden;
+    max-height:0;
+    opacity:0;
+    transition:max-height .3s ease,opacity .2s ease,padding .3s ease;
+    position:relative;
+    z-index:20;
+  }
+  .mobile-menu.open{
+    max-height:80vh;
+    opacity:1;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+  .mobile-menu > a,
+  .mobile-products-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    width:100%;
+    padding:16px 10px;
+    color:var(--muted);
+    text-decoration:none;
+    font-weight:700;
+    font-size:15px;
+    border:0;
+    border-bottom:1px solid var(--line);
+    background:transparent;
+    text-align:left;
+    cursor:pointer;
+  }
+  .mobile-menu > a .ar,
+  .mobile-products-toggle .ar{
+    font-size:13px;
+    font-weight:600;
+    color:var(--muted);
+    opacity:.7;
+  }
+  .mobile-menu > a:last-child{border-bottom:0}
+  .mobile-menu > a.active{color:var(--accent-2)}
+
+  /* Mobile Products dropdown */
+  .mobile-products{border-bottom:1px solid var(--line)}
+  .mobile-products-toggle{border-bottom:0}
+  .mobile-products-toggle .dropdown-arrow{
+    margin-left:auto;
+    font-size:13px;
+    opacity:.7;
+    transition:transform .2s ease;
+  }
+  .mobile-products.open .mobile-products-toggle .dropdown-arrow{
+    transform:rotate(180deg);
+  }
+  .mobile-dropdown-menu{
+    display:none;
+    padding:0 0 8px 8px;
+  }
+  .mobile-products.open .mobile-dropdown-menu{display:block}
+  .mobile-dropdown-menu a{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:12px 10px;
+    color:var(--muted);
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+    border:0;
+  }
+  .mobile-dropdown-menu a:hover{color:var(--text);background:rgba(255,255,255,.04);border-radius:8px}
+  .mobile-dropdown-menu a .ar{font-size:11px;opacity:.65}
+
+  /* ---------- HERO CONTENT ---------- */
+  .hero-content{
+    width:min(1400px,100%);
+    margin:auto;
+    padding:clamp(48px,9vh,100px) clamp(18px,4vw,56px);
+    position:relative;
+    z-index:5;
+  }
+  .hero-copy{max-width:640px}
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    margin-bottom:22px;
+    color:var(--accent-2);
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+  .eyebrow .ar{
+    font-family:'Manrope',sans-serif;
+    text-transform:none;
+    letter-spacing:0;
+    color:var(--muted);
+    opacity:.8;
+  }
+  .eyebrow::before{
+    content:"";
+    width:28px;height:2px;
+    background:var(--accent);
+    border-radius:20px;
+  }
+  h1{
+    font-family:'Anton',sans-serif;
+    font-weight:400;
+    font-size:clamp(40px,6vw,76px);
+    line-height:1.04;
+    letter-spacing:.01em;
+    text-transform:uppercase;
+    max-width:9ch;
+  }
+  h1 .ar-line{
+    display:block;
+    margin-top:10px;
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    font-size:.38em;
+    letter-spacing:.02em;
+    line-height:1.3;
+    color:var(--accent-2);
+    text-transform:none;
+  }
+  .sub{
+    margin-top:22px;
+    max-width:500px;
+    color:var(--muted);
+    font-size:clamp(14px,1.1vw,15.5px);
+    line-height:1.75;
+    font-weight:500;
+  }
+  .sub .ar{
+    display:block;
+    margin-top:6px;
+    opacity:.85;
+  }
+  .cta-row{
+    margin-top:30px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .btn-primary{
+    min-height:52px;
+    padding:0 28px;
+    border:0;
+    border-radius:9px;
+    display:inline-flex;
+    align-items:baseline;
+    gap:8px;
+    background:var(--accent);
+    color:var(--bg);
+    font-weight:900;
+    font-size:14px;
+    box-shadow:0 15px 35px rgba(184,184,189,.24);
+    transition:transform .2s ease,box-shadow .2s ease;
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 20px 42px rgba(184,184,189,.34);
+  }
+  .btn-primary .ar{font-size:12px;font-weight:700;opacity:.75}
+  .btn-link{
+    min-height:52px;
+    padding:0 16px;
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    border:0;
+    background:transparent;
+    color:var(--text);
+    font-weight:800;
+    font-size:14px;
+  }
+  .btn-link .ar{font-size:12px;font-weight:600;color:var(--muted)}
+  .btn-link::after{content:"→";color:var(--accent);transition:transform .2s}
+  .btn-link:hover::after{transform:translateX(4px)}
+
+  .hero-meta{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:14px 26px;
+    margin-top:34px;
+    padding-top:26px;
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    font-size:12px;
+    font-weight:700;
+  }
+  .hero-meta span{display:flex;align-items:center;gap:7px}
+  .hero-meta strong{color:var(--text)}
+  .hero-meta .ar{font-weight:600;opacity:.75}
+
+  /* ---------- THUMBNAILS ---------- */
+  .thumbs{
+    width:min(1400px,100%);
+    margin:0 auto;
+    padding:0 clamp(18px,56px) 34px;
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    position:relative;
+    z-index:5;
+  }
+  .thumbs::-webkit-scrollbar{display:none}
+  .thumb{
+    width:76px;height:76px;
+    flex:0 0 76px;
+    border:1px solid rgba(235,235,238,.16);
+    border-radius:12px;
+    overflow:hidden;
+    position:relative;
+    opacity:.72;
+    transition:.2s ease;
+  }
+  .thumb:hover{opacity:1;transform:translateY(-3px)}
+  .thumb.active{
+    opacity:1;
+    border:2px solid var(--accent);
+    box-shadow:0 8px 24px rgba(184,184,189,.16);
+  }
+  .thumb img{width:100%;height:100%;object-fit:cover}
+  .thumb.active::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,.08);
+  }
+
+  /* ---------- PRODUCTS ---------- */
+  .products{
+    position:relative;
+    padding:clamp(70px,9vw,120px) 0 100px;
+    background:
+      radial-gradient(circle at 80% 0%,rgba(184,184,189,.07),transparent 25%),
+      var(--bg);
+  }
+  .products-head{
+    width:min(1400px,100%);
+    margin:0 auto 38px;
+    padding:0 clamp(18px,4vw,56px);
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:30px;
+  }
+  .section-kicker{
+    color:var(--accent);
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    margin-bottom:11px;
+  }
+  .products-head h2{
+    font-family:'Anton',sans-serif;
+    font-size:clamp(38px,5vw,58px);
+    font-weight:400;
+    line-height:.95;
+    text-transform:uppercase;
+  }
+  .products-head p{
+    max-width:390px;
+    margin-top:14px;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.65;
+  }
+  .scroll-controls{display:flex;gap:9px}
+  .scroll-btn{
+    width:46px;height:46px;
+    border:1px solid var(--line);
+    border-radius:50%;
+    background:var(--panel);
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:.2s ease;
+  }
+  .scroll-btn:hover{
+    background:var(--accent);
+    color:var(--bg);
+    border-color:var(--accent);
+  }
+
+  .products-track{
+    width:min(1400px,100%);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:22px;
+    padding:8px clamp(18px,4vw,56px) 25px;
+  }
+  .products-track::-webkit-scrollbar{display:none}
+
+  .product-card{
+    position:relative;
+    min-width:0;
+    width:100%;
+    overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+    box-shadow:0 15px 45px rgba(0,0,0,.18);
+    transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+  }
+  .product-card:hover{
+    transform:translateY(-7px);
+    border-color:rgba(184,184,189,.35);
+    box-shadow:var(--shadow);
+  }
+  .product-media{
+    position:relative;
+    aspect-ratio:1/1;
+    overflow:hidden;
+    background:var(--panel);
+  }
+  .product-media::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.18));
+    pointer-events:none;
+  }
+  .product-media img{
+    width:100%;height:100%;
+    object-fit:cover;
+    transition:transform .5s ease;
+  }
+  .product-card:hover .product-media img{transform:scale(1.055)}
+  .product-tag{
+    position:absolute;
+    z-index:2;
+    top:14px;left:14px;
+    padding:6px 10px;
+    border-radius:999px;
+    color:var(--bg);
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.04em;
+    background:var(--accent);
+  }
+  .tag-new{background:#8fd15a}
+  .tag-spicy{background:#ff5a4e;color:#fff}
+  .tag-veg{background:#6bc16a}
+  .tag-limited{background:var(--accent-2)}
+  .tag-classic{background:var(--text)}
+
+  .product-body{
+    min-height:184px;
+    padding:19px 19px 18px;
+    display:flex;
+    flex-direction:column;
+  }
+  .product-body h3{
+    font-family:'Anton',sans-serif;
+    font-size:21px;
+    font-weight:400;
+    text-transform:uppercase;
+  }
+  .product-body p{
+    margin-top:8px;
+    color:var(--muted);
+    font-size:12.5px;
+    line-height:1.55;
+  }
+  .product-foot{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:auto;
+    padding-top:15px;
+  }
+  .product-price{
+    color:var(--accent-2);
+    font-family:'Anton',sans-serif;
+    font-size:21px;
+  }
+  .add-btn{
+    width:40px;height:40px;
+    border:1px solid rgba(184,184,189,.7);
+    border-radius:50%;
+    background:transparent;
+    color:var(--accent);
+    font-size:19px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:.2s ease;
+  }
+  .add-btn:hover{
+    background:var(--accent);
+    color:var(--bg);
+    transform:rotate(90deg);
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+
+  /* ---------- RESPONSIVE PRODUCT CARDS ---------- */
+  @media (max-width:1200px){
+    .products-track{
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:18px;
+    }
+  }
+
+  @media (max-width:900px){
+    .products-track{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+      padding-left:20px;
+      padding-right:20px;
+    }
+    .product-card{
+      border-radius:19px;
+    }
+    .product-media{
+      aspect-ratio:1/1;
+    }
+    .product-body{
+      min-height:175px;
+    }
+  }
+
+  @media (max-width:600px){
+    .products-track{
+      display:flex;
+      width:100%;
+      margin:0;
+      gap:13px;
+      overflow-x:auto;
+      padding:5px 16px 20px;
+      scroll-snap-type:x mandatory;
+      scrollbar-width:none;
+      overscroll-behavior-x:contain;
+      -webkit-overflow-scrolling:touch;
+    }
+    .products-track::-webkit-scrollbar{display:none}
+
+    .product-card{
+      flex:0 0 calc(100vw - 32px);
+      width:calc(100vw - 32px);
+      max-width:340px;
+      scroll-snap-align:center;
+      border-radius:20px;
+    }
+
+    .product-media{
+      aspect-ratio:1/1;
+    }
+
+    .product-body{
+      min-height:175px;
+      padding:18px 18px 19px;
+    }
+
+    .product-body h3{
+      font-size:21px;
+    }
+
+    .product-body p{
+      font-size:12.5px;
+      line-height:1.55;
+    }
+
+    .product-price{
+      font-size:20px;
+    }
+  }
+
+  @media (max-width:380px){
+    .product-card{
+      flex-basis:calc(100vw - 24px);
+      width:calc(100vw - 24px);
+    }
+    .products-track{
+      padding-left:12px;
+      padding-right:12px;
+    }
+  }
+
+  @media (max-width:1000px){
+    .nav-links{gap:22px}
+    .nav-links a{font-size:14px}
+    .nav-links a .ar{font-size:10px}
+    .hero-content{padding-top:50px;padding-bottom:55px}
+    .hero-meta{margin-top:26px}
+  }
+
+  @media (max-width:900px){
+    .scroll-controls{display:none}
+  }
+
+  @media (max-width:820px){
+    nav{padding:20px 20px}
+    .logo{font-size:15px}
+    .menu-toggle{display:flex}
+    .mobile-menu{display:block}
+
+    /* Mobile uses only the hamburger menu; desktop nav/dropdown stays hidden. */
+    .nav-links{display:none}
+
+    .hero{
+      min-height:auto;
+    }
+    .hero-content{
+      padding:clamp(40px,8vh,80px) 20px 44px;
+    }
+    .bg-wash{
+      background:
+        radial-gradient(circle at 75% 25%,rgba(184,184,189,.1),transparent 32%),
+        linear-gradient(180deg,rgba(12,12,13,.5),rgba(12,12,13,.72) 42%,rgba(12,12,13,.98) 100%);
+    }
+    h1{font-size:clamp(36px,9vw,58px);line-height:1.08}
+    h1 .ar-line{font-size:.42em;margin-top:8px}
+    .sub{max-width:560px}
+    .sub .ar{font-size:.92em}
+    .thumbs{padding-left:20px;padding-right:20px}
+    .products-head{
+      align-items:flex-start;
+      padding-left:20px;
+      padding-right:20px;
+    }
+    .scroll-controls{display:none}
+    .products-track{
+      padding-left:20px;
+      padding-right:20px;
+    }
+  }
+
+  @media (max-width:600px){
+    nav{padding:16px 16px}
+    .logo{font-size:13px;gap:9px}
+    .logo small{font-size:9px}
+    .nav-icons{gap:5px}
+    .nav-icons button{width:40px;height:40px}
+    .nav-icons button:not(.menu-toggle){display:none}
+
+    .hero-content{
+      padding:40px 16px 34px;
+    }
+    .eyebrow{
+      font-size:9px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+      row-gap:4px;
+    }
+    .eyebrow .ar{font-size:10px;width:100%}
+    .eyebrow::before{width:20px}
+    h1{
+      font-size:clamp(32px,10.5vw,46px);
+      max-width:10ch;
+      line-height:1.12;
+    }
+    h1 .ar-line{font-size:.46em;margin-top:8px}
+    .sub{
+      margin-top:18px;
+      font-size:13.5px;
+      line-height:1.6;
+    }
+    .sub .ar{font-size:12.5px;margin-top:5px}
+    .cta-row{
+      margin-top:22px;
+      flex-direction:column;
+      align-items:stretch;
+      gap:10px;
+    }
+    .btn-primary,.btn-link{width:100%;justify-content:center}
+    .btn-primary{flex-wrap:wrap}
+    .hero-meta{
+      flex-wrap:wrap;
+      gap:10px 16px;
+      margin-top:20px;
+      padding-top:18px;
+      font-size:10px;
+    }
+    .hero-meta .ar{display:block;font-size:9.5px;margin-top:2px}
+
+    .thumbs{
+      padding:0 16px 24px;
+      gap:9px;
+    }
+    .thumb{
+      width:62px;height:62px;flex-basis:62px;
+      border-radius:10px;
+    }
+
+    .products{
+      padding:60px 0 70px;
+    }
+    .products-head{
+      padding:0 16px;
+      margin-bottom:26px;
+    }
+    .section-kicker{font-size:9px}
+    .products-head h2{font-size:36px}
+    .products-head p{font-size:13px;margin-top:11px}
+
+    .products-track{
+      gap:12px;
+      padding:5px 16px 18px;
+    }
+    .product-card{
+      flex-basis:min(82vw,290px);
+      border-radius:19px;
+    }
+    .product-body{min-height:178px}
+  }
+
+  @media (max-width:370px){
+    .nav-icons button{width:34px;height:34px}
+    h1{font-size:38px}
+    .product-card{flex-basis:86vw}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{
+      transition:none!important;
+      animation:none!important;
+    }
+  }
+
+/* Mobile auto carousel - centered cards */
+@media (max-width: 600px) {
+  #productsTrack {
+    overflow-x: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    touch-action: pan-x;
+  }
+
+  #productsTrack::-webkit-scrollbar {
+    display: none;
+  }
+
+  #productsTrack .product-card {
+    flex: 0 0 calc(100vw - 64px);
+    width: calc(100vw - 64px);
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+}
+
+@media (max-width: 380px) {
+  #productsTrack {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  #productsTrack .product-card {
+    flex-basis: calc(100vw - 48px);
+    width: calc(100vw - 48px);
+  }
+}
+
+/* ================= PREMIUM BEEF BURGER SECTION ================= */
+.beef-section {
+  position: relative;
+  padding: 110px 7% 120px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, .045), transparent 28%),
+    radial-gradient(circle at 85% 80%, rgba(255, 255, 255, .035), transparent 30%),
+    #0b0b0b;
+}
+
+.beef-section::before {
+  content: "BEEF";
+  position: absolute;
+  right: -35px;
+  top: 20px;
+  font-size: clamp(110px, 18vw, 280px);
+  font-weight: 900;
+  letter-spacing: -.08em;
+  color: rgba(255,255,255,.025);
+  pointer-events: none;
+}
+
+.beef-heading {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto 55px;
+  text-align: center;
+}
+
+.beef-kicker {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .28em;
+  opacity: .6;
+}
+
+.beef-heading h2 {
+  margin: 0;
+  font-size: clamp(38px, 6vw, 76px);
+  line-height: .95;
+  letter-spacing: .06em;
+  font-weight: 900;
+}
+
+.beef-heading p {
+  max-width: 560px;
+  margin: 20px auto 0;
+  color: rgba(255,255,255,.58);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.beef-grid {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.beef-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 48% 52%;
+  min-height: 430px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 28px;
+  background: linear-gradient(135deg, #171717, #0f0f0f);
+  box-shadow: 0 24px 70px rgba(0,0,0,.34);
+  transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+
+.beef-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255,255,255,.24);
+  box-shadow: 0 30px 85px rgba(0,0,0,.5);
+}
+
+.beef-image {
+  position: relative;
+  min-height: 430px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,.12), transparent 38%),
+    #151515;
+}
+
+.beef-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.beef-placeholder {
+  text-align: center;
+  font-size: clamp(30px, 3vw, 48px);
+  line-height: .85;
+  font-weight: 900;
+  letter-spacing: .08em;
+  opacity: .18;
+}
+
+.beef-placeholder small {
+  font-size: .34em;
+  letter-spacing: .45em;
+}
+
+.beef-badge {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  padding: 7px 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(10px);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .18em;
+}
+
+.beef-info {
+  position: relative;
+  padding: 40px 32px 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.beef-number {
+  font-size: 11px;
+  opacity: .38;
+  letter-spacing: .2em;
+}
+
+.beef-info h3 {
+  margin: 38px 0 4px;
+  font-size: clamp(25px, 2.3vw, 35px);
+  font-weight: 900;
+}
+
+.beef-info h4 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: .05em;
+  opacity: .68;
+}
+
+.beef-info p {
+  margin: 22px 0;
+  color: rgba(255,255,255,.55);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.beef-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.beef-bottom strong {
+  font-size: 25px;
+}
+
+.beef-bottom button {
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 999px;
+  padding: 11px 15px;
+  background: rgba(255,255,255,.08);
+  color: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  cursor: pointer;
+  transition: background .25s ease, transform .25s ease;
+}
+
+.beef-bottom button span {
+  margin-left: 7px;
+  font-size: 16px;
+  vertical-align: -1px;
+}
+
+.beef-bottom button:hover {
+  background: rgba(255,255,255,.16);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .beef-section {
+    padding: 85px 5% 90px;
+  }
+
+  .beef-grid {
+    gap: 20px;
+  }
+
+  .beef-card {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .beef-image {
+    min-height: 310px;
+    aspect-ratio: 1.25 / 1;
+  }
+
+  .beef-info {
+    min-height: 270px;
+  }
+
+  .beef-info h3 {
+    margin-top: 22px;
+  }
+}
+
+@media (max-width: 600px) {
+  .beef-section {
+    padding: 70px 16px 80px;
+  }
+
+  .beef-heading {
+    margin-bottom: 32px;
+  }
+
+  .beef-heading h2 {
+    font-size: 39px;
+  }
+
+  .beef-heading p {
+    font-size: 13px;
+    padding: 0 12px;
+  }
+
+  .beef-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .beef-card {
+    border-radius: 22px;
+  }
+
+  .beef-image {
+    min-height: 270px;
+  }
+
+  .beef-info {
+    padding: 25px 22px 22px;
+    min-height: 250px;
+  }
+
+  .beef-info h3 {
+    font-size: 28px;
+  }
+
+  .beef-info h4 {
+    font-size: 15px;
+  }
+
+  .beef-info p {
+    margin: 15px 0 20px;
+  }
+
+  .beef-bottom strong {
+    font-size: 23px;
+  }
+}
+
+
+/* ================= PREMIUM CHICKEN BURGER SECTION ================= */
+.chicken-section {
+  position: relative;
+  padding: 110px 7% 120px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 18%, rgba(255,255,255,.045), transparent 28%),
+    radial-gradient(circle at 12% 82%, rgba(255,255,255,.035), transparent 30%),
+    #101010;
+}
+
+.chicken-section::before {
+  content: "CHICKEN";
+  position: absolute;
+  left: -35px;
+  bottom: 20px;
+  font-size: clamp(90px, 16vw, 250px);
+  font-weight: 900;
+  letter-spacing: -.08em;
+  color: rgba(255,255,255,.025);
+  pointer-events: none;
+}
+
+.chicken-heading {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto 55px;
+  text-align: center;
+}
+
+.chicken-kicker {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .28em;
+  opacity: .6;
+}
+
+.chicken-heading h2 {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 68px);
+  line-height: 1;
+  letter-spacing: .02em;
+  font-weight: 900;
+}
+
+.chicken-heading p {
+  max-width: 560px;
+  margin: 20px auto 0;
+  color: rgba(255,255,255,.58);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.chicken-grid {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.chicken-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 48% 52%;
+  min-height: 430px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 28px;
+  background: linear-gradient(135deg, #191919, #101010);
+  box-shadow: 0 24px 70px rgba(0,0,0,.34);
+  transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+
+.chicken-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255,255,255,.24);
+  box-shadow: 0 30px 85px rgba(0,0,0,.5);
+}
+
+.chicken-image {
+  position: relative;
+  min-height: 430px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,.12), transparent 38%),
+    #161616;
+}
+
+.chicken-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.chicken-placeholder {
+  text-align: center;
+  font-size: clamp(28px, 3vw, 46px);
+  line-height: .85;
+  font-weight: 900;
+  letter-spacing: .07em;
+  opacity: .18;
+}
+
+.chicken-placeholder small {
+  font-size: .34em;
+  letter-spacing: .4em;
+}
+
+.chicken-badge {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  padding: 7px 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(10px);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+
+.chicken-info {
+  position: relative;
+  padding: 40px 32px 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chicken-number {
+  font-size: 11px;
+  opacity: .38;
+  letter-spacing: .2em;
+}
+
+.chicken-info h3 {
+  margin: 38px 0 4px;
+  font-size: clamp(24px, 2.2vw, 34px);
+  font-weight: 900;
+}
+
+.chicken-info h4 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: .04em;
+  opacity: .68;
+}
+
+.chicken-info p {
+  margin: 22px 0;
+  color: rgba(255,255,255,.55);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.chicken-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chicken-bottom strong {
+  font-size: 25px;
+}
+
+.chicken-bottom button {
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 999px;
+  padding: 11px 15px;
+  background: rgba(255,255,255,.08);
+  color: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  cursor: pointer;
+  transition: background .25s ease, transform .25s ease;
+}
+
+.chicken-bottom button span {
+  margin-left: 7px;
+  font-size: 16px;
+  vertical-align: -1px;
+}
+
+.chicken-bottom button:hover {
+  background: rgba(255,255,255,.16);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .chicken-section {
+    padding: 85px 5% 90px;
+  }
+
+  .chicken-grid {
+    gap: 20px;
+  }
+
+  .chicken-card {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .chicken-image {
+    min-height: 310px;
+    aspect-ratio: 1.25 / 1;
+  }
+
+  .chicken-info {
+    min-height: 270px;
+  }
+
+  .chicken-info h3 {
+    margin-top: 22px;
+  }
+}
+
+@media (max-width: 600px) {
+  .chicken-section {
+    padding: 70px 16px 80px;
+  }
+
+  .chicken-heading {
+    margin-bottom: 32px;
+  }
+
+  .chicken-heading h2 {
+    font-size: 32px;
+    line-height: 1.15;
+  }
+
+  .chicken-heading p {
+    font-size: 13px;
+    padding: 0 12px;
+  }
+
+  .chicken-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .chicken-card {
+    border-radius: 22px;
+  }
+
+  .chicken-image {
+    min-height: 270px;
+  }
+
+  .chicken-info {
+    padding: 25px 22px 22px;
+    min-height: 250px;
+  }
+
+  .chicken-info h3 {
+    font-size: 28px;
+  }
+
+  .chicken-info h4 {
+    font-size: 15px;
+  }
+
+  .chicken-info p {
+    margin: 15px 0 20px;
+  }
+
+  .chicken-bottom strong {
+    font-size: 23px;
+  }
+}
+
+
+/* =========================================================
+   FIVE NEW MENU CATEGORIES
+   Images intentionally left as placeholders for later.
+   ========================================================= */
+.menu-category {
+  position: relative;
+  padding: 110px 7%;
+  overflow: hidden;
+}
+
+.menu-category-heading {
+  max-width: 760px;
+  margin: 0 auto 55px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.menu-category-heading > span {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .3em;
+  opacity: .45;
+}
+
+.menu-category-heading h2 {
+  margin: 0;
+  font-size: clamp(35px, 5vw, 68px);
+  line-height: 1.05;
+  font-weight: 900;
+}
+
+.menu-category-heading p {
+  margin: 18px auto 0;
+  max-width: 560px;
+  color: rgba(255,255,255,.55);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.menu-category-grid {
+  max-width: 1200px;
+  margin: auto;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 22px;
+}
+
+.fries-section {
+  background: #0d0d0d;
+}
+
+.fries-section::after {
+  content: "FRIES";
+  position: absolute;
+  right: -20px;
+  top: 30px;
+  font-size: clamp(100px, 20vw, 290px);
+  font-weight: 900;
+  opacity: .025;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+.fries-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.menu-item-card {
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 24px;
+  background: #151515;
+  transition: transform .3s ease, border-color .3s ease;
+}
+
+.menu-item-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(255,255,255,.22);
+}
+
+.menu-item-image {
+  position: relative;
+  height: 220px;
+  display: grid;
+  place-items: center;
+  background: #1b1b1b;
+  overflow: hidden;
+}
+
+.menu-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu-item-image > span {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.55);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.image-placeholder {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  opacity: .13;
+}
+
+.menu-item-content {
+  padding: 22px;
+}
+
+.menu-item-content h3 {
+  margin: 0 0 5px;
+  font-size: 22px;
+}
+
+.menu-item-content h4 {
+  margin: 0;
+  font-size: 13px;
+  opacity: .55;
+}
+
+.menu-item-content p {
+  margin: 14px 0 20px;
+  min-height: 42px;
+  color: rgba(255,255,255,.5);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.menu-item-content > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menu-item-content strong {
+  font-size: 21px;
+}
+
+.menu-item-content button {
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  padding: 9px 13px;
+  color: inherit;
+  background: rgba(255,255,255,.07);
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.appetizers-section {
+  background: #121212;
+}
+
+.appetizers-grid {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 1050px;
+}
+
+.appetizer-card {
+  display: grid;
+  grid-template-columns: 40% 60%;
+}
+
+.appetizer-card .menu-item-image {
+  height: 100%;
+  min-height: 245px;
+}
+
+.featured-item {
+  border-color: rgba(255,255,255,.2);
+}
+
+.featured-item .menu-item-image > span {
+  left: 13px;
+  right: auto;
+}
+
+.sauces-section {
+  background: #090909;
+}
+
+.sauce-panel {
+  max-width: 1100px;
+  margin: auto;
+  padding: 65px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 38px;
+  background: linear-gradient(145deg,#181818,#0d0d0d);
+}
+
+.sauce-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.sauce-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px;
+  background: rgba(255,255,255,.025);
+  transition: background .25s ease, transform .25s ease;
+}
+
+.sauce-item:hover {
+  background: rgba(255,255,255,.07);
+  transform: translateX(4px);
+}
+
+.sauce-icon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.15);
+  font-size: 10px;
+  opacity: .6;
+}
+
+.sauce-item h3 {
+  margin: 0 0 3px;
+  font-size: 15px;
+}
+
+.sauce-item p {
+  margin: 0;
+  font-size: 11px;
+  opacity: .45;
+}
+
+.sauce-item > strong {
+  margin-left: auto;
+  font-size: 16px;
+}
+
+.additions-section {
+  background: #111;
+}
+
+.addition-grid {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 16px;
+}
+
+.addition-card {
+  position: relative;
+  min-height: 225px;
+  padding: 25px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  background: linear-gradient(150deg,#1a1a1a,#101010);
+  transition: transform .3s ease;
+}
+
+.addition-card:hover {
+  transform: translateY(-5px) rotate(.5deg);
+}
+
+.addition-card > span {
+  position: absolute;
+  top: 15px;
+  right: 17px;
+  font-size: 9px;
+  opacity: .35;
+}
+
+.addition-placeholder {
+  margin-top: 15px;
+  font-size: 25px;
+  font-weight: 900;
+  opacity: .09;
+  letter-spacing: .08em;
+}
+
+.addition-card h3 {
+  margin: 30px 0 4px;
+  font-size: 19px;
+}
+
+.addition-card p {
+  margin: 0;
+  font-size: 11px;
+  opacity: .48;
+}
+
+.addition-card strong {
+  display: block;
+  margin-top: 18px;
+  font-size: 16px;
+}
+
+.drinks-section {
+  background: #080808;
+}
+
+.drink-split {
+  max-width: 1180px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: .85fr 1.15fr;
+  gap: 55px;
+  align-items: center;
+}
+
+.drink-intro {
+  position: relative;
+  min-height: 500px;
+  padding: 55px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 35px;
+  background: radial-gradient(circle at 50% 45%,rgba(255,255,255,.07),transparent 42%),#111;
+}
+
+.drink-intro > span {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .25em;
+  opacity: .4;
+}
+
+.drink-intro h2 {
+  margin: 20px 0;
+  font-size: clamp(40px,5vw,68px);
+  line-height: 1.05;
+}
+
+.drink-intro p {
+  max-width: 330px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.7;
+  font-size: 13px;
+}
+
+.drink-circle {
+  position: absolute;
+  right: -45px;
+  bottom: -45px;
+  width: 230px;
+  height: 230px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .25em;
+  opacity: .25;
+}
+
+.drink-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drink-item {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.09);
+}
+
+.drink-image {
+  height: 65px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: #171717;
+  font-size: 9px;
+  font-weight: 900;
+  opacity: .35;
+}
+
+.drink-item h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+
+.drink-item p {
+  margin: 0;
+  font-size: 11px;
+  opacity: .45;
+}
+
+.drink-item > strong {
+  font-size: 17px;
+}
+
+@media (max-width: 1000px) {
+  .fries-grid {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .addition-grid {
+    grid-template-columns: repeat(3,1fr);
+  }
+
+  .drink-split {
+    grid-template-columns: 1fr;
+  }
+
+  .drink-intro {
+    min-height: 330px;
+  }
+}
+
+@media (max-width: 700px) {
+  .menu-category {
+    padding: 75px 16px;
+  }
+
+  .menu-category-heading {
+    margin-bottom: 35px;
+  }
+
+  .menu-category-heading h2 {
+    font-size: 32px;
+  }
+
+  .fries-grid,
+  .appetizers-grid,
+  .sauce-list,
+  .addition-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .appetizer-card {
+    display: block;
+  }
+
+  .appetizer-card .menu-item-image {
+    min-height: 230px;
+    height: 230px;
+  }
+
+  .sauce-panel {
+    padding: 35px 18px;
+    border-radius: 25px;
+  }
+
+  .sauce-item {
+    padding: 14px;
+  }
+
+  .addition-card {
+    min-height: 195px;
+  }
+
+  .drink-intro {
+    min-height: 330px;
+    padding: 35px 25px;
+  }
+
+  .drink-circle {
+    width: 170px;
+    height: 170px;
+  }
+
+  .drink-item {
+    grid-template-columns: 65px 1fr auto;
+    gap: 12px;
+  }
+
+  .drink-image {
+    height: 58px;
+  }
+}
+
+@media (max-width: 420px) {
+  .menu-category-heading h2 {
+    font-size: 28px;
+  }
+
+  .menu-item-content {
+    padding: 18px;
+  }
+
+  .drink-item h3 {
+    font-size: 15px;
+  }
+
+  .drink-item > strong {
+    font-size: 15px;
+  }
+}
+
+
+/* ================= SITE FOOTER ================= */
+.site-footer {
+  position: relative;
+  padding: 34px 20px;
+  text-align: center;
+  background: #070707;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.site-footer .footer-line {
+  width: 55px;
+  height: 1px;
+  margin: 0 auto 18px;
+  background: rgba(255,255,255,.3);
+}
+
+.site-footer p {
+  margin: 0;
+  color: rgba(255,255,255,.45);
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+
+.site-footer strong {
+  color: rgba(255,255,255,.85);
+  font-weight: 800;
+}
+/* ye image ke upar dark aa rha tha isliye */
+.menu-item-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-item-image > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;
+  filter: none;
+}
+/* this is for souce images */
+.sauce-icon {
+  position: relative;
+  overflow: hidden;
+}
+
+.sauce-icon img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.sauce-icon span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* ===== SAUCE IMAGES FIX ===== */
+
+.sauce-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.sauce-item {
+  min-height: 150px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.sauce-icon {
+  position: relative;
+  width: 125px;
+  height: 125px;
+  min-width: 125px;
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.sauce-icon img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;
+  filter: none;
+}
+
+.sauce-icon span {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 5;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .sauce-list {
+    grid-template-columns: 1fr;
+  }
+
+  .sauce-item {
+    min-height: 135px;
+  }
+
+  .sauce-icon {
+    width: 105px;
+    height: 105px;
+    min-width: 105px;
+  }
+}
+/* SAUCE SECTION FIX */
+.sauce-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+.sauce-item {
+  min-height: 170px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.sauce-icon {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  min-width: 170px;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.sauce-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 1;
+  filter: none;
+}
+
+/* NUMBER IMAGE KE UPAR */
+.sauce-icon span {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+
+  background: rgba(0,0,0,.75);
+  color: white;
+  padding: 5px 9px;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* NAME */
+.sauce-info {
+  flex: 1;
+}
+
+.sauce-info h3 {
+  margin: 0 0 6px;
+  font-size: 21px;
+  color: #fff;
+}
+
+.sauce-info p {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: #888;
+}
+
+/* PRICE */
+.sauce-price {
+  margin-left: auto;
+  font-size: 21px;
+  font-weight: 800;
+  color: #fff;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .sauce-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .sauce-item {
+    min-height: 130px;
+    padding: 14px;
+    gap: 15px;
+  }
+
+  .sauce-icon {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+  }
+
+  .sauce-info h3 {
+    font-size: 17px;
+  }
+
+  .sauce-info p {
+    font-size: 11px;
+  }
+
+  .sauce-price {
+    font-size: 17px;
+  }
+}
+/* NUMBER SHADOW COMPLETELY REMOVE */
+.sauce-icon span {
+  text-shadow: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+}
+.sauce-icon span {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+
+  color: #fff !important;
+  font-size: 16px;
+  font-weight: 700;
+
+  background: transparent !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+</style>
+<script>
+  function toggleMobileMenu(){
+    const menu = document.getElementById('mobileMenu');
+    const button = document.querySelector('.menu-toggle');
+    const isOpen = menu.classList.toggle('open');
+    if (button) button.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  document.addEventListener('click', (event) => {
+    const menu = document.getElementById('mobileMenu');
+    const button = document.querySelector('.menu-toggle');
+    if (!menu || !button) return;
+
+    if (menu.classList.contains('open') &&
+        !menu.contains(event.target) &&
+        !button.contains(event.target)) {
+      menu.classList.remove('open');
+      button.setAttribute('aria-expanded', 'false');
+    }
+  });
+</script>
+<style>
+/* ===== Clean scroll reveal — layout preserved ===== */
+html { scroll-behavior: smooth; }
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .65s ease, transform .65s ease;
+  will-change: opacity, transform;
+}
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-card {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .55s ease, transform .55s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.scroll-reveal-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .scroll-reveal,
+  .scroll-reveal-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* ================= ADDITIONS IMAGES ================= */
+
+.addition-image {
+  width: 100%;
+  height: 190px;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: #111;
+}
+
+.addition-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;
+  filter: none;
+  transition: transform 0.3s ease;
+}
+
+.addition-card:hover .addition-image img {
+  transform: scale(1.05);
+}
+
+/* NUMBER */
+.addition-card > span {
+  position: absolute;
+  z-index: 5;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .addition-image {
+    height: 160px;
+  }
+}
+/* ================= DRINKS IMAGES ================= */
+
+.drink-split {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 35px;
+  align-items: stretch;
+}
+
+
+/* LEFT SIDE */
+
+.drink-intro {
+  position: relative;
+  overflow: hidden;
+  padding: 28px;
+  border-radius: 24px;
+
+  background: #151515;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.drink-hero-image {
+  width: 100%;
+  height: 320px;
+  margin-bottom: 25px;
+
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.drink-hero-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform .4s ease;
+}
+
+.drink-intro:hover .drink-hero-image img {
+  transform: scale(1.04);
+}
+
+.drink-intro > span {
+  display: block;
+  margin-bottom: 10px;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.drink-intro h2 {
+  margin: 0 0 12px;
+  font-size: 32px;
+  color: #fff;
+}
+
+.drink-intro p {
+  color: #999;
+  line-height: 1.7;
+}
+
+
+/* DRINK CIRCLE */
+
+.drink-circle {
+  width: 100px;
+  height: 100px;
+
+  margin-top: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 50%;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+
+/* RIGHT SIDE */
+
+.drink-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.drink-item {
+  min-height: 105px;
+  padding: 14px 18px;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  background: #151515;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+
+  transition: transform .25s ease,
+              border-color .25s ease;
+}
+
+.drink-item:hover {
+  transform: translateX(5px);
+  border-color: rgba(255,255,255,.16);
+}
+
+
+/* DRINK IMAGE */
+
+.drink-image {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+
+  border-radius: 14px;
+  overflow: hidden;
+
+  background: #111;
+}
+
+.drink-image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  opacity: 1;
+  filter: none;
+
+  transition: transform .3s ease;
+}
+
+.drink-item:hover .drink-image img {
+  transform: scale(1.08);
+}
+
+
+/* NAME */
+
+.drink-item > div:nth-child(2) {
+  flex: 1;
+}
+
+.drink-item h3 {
+  margin: 0 0 5px;
+
+  font-size: 18px;
+  color: #fff;
+}
+
+.drink-item p {
+  margin: 0;
+
+  font-size: 12px;
+  font-style: italic;
+
+  color: #888;
+}
+
+
+/* PRICE */
+
+.drink-item strong {
+  margin-left: auto;
+
+  font-size: 18px;
+  color: #fff;
+
+  white-space: nowrap;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 850px) {
+
+  .drink-split {
+    grid-template-columns: 1fr;
+  }
+
+  .drink-hero-image {
+    height: 280px;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .drink-intro {
+    padding: 18px;
+  }
+
+  .drink-hero-image {
+    height: 220px;
+  }
+
+  .drink-intro h2 {
+    font-size: 25px;
+  }
+
+  .drink-item {
+    min-height: 90px;
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .drink-image {
+    width: 65px;
+    height: 65px;
+    min-width: 65px;
+  }
+
+  .drink-item h3 {
+    font-size: 16px;
+  }
+
+  .drink-item p {
+    font-size: 10px;
+  }
+
+  .drink-item strong {
+    font-size: 16px;
+  }
+
+}
+/* ================= DRINK IMAGE CLEAR FIX ================= */
+
+.drink-image {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+
+  padding: 0 !important;
+  overflow: hidden !important;
+
+  display: block !important;
+  border-radius: 14px !important;
+
+  background: #111 !important;
+
+  /* SABSE IMPORTANT */
+  opacity: 1 !important;
+}
+
+.drink-image img {
+  width: 100% !important;
+  height: 100% !important;
+
+  display: block !important;
+
+  object-fit: cover !important;
+  object-position: center !important;
+
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+
+/* LEFT BIG IMAGE */
+
+.drink-hero-image {
+  overflow: hidden !important;
+  opacity: 1 !important;
+}
+
+.drink-hero-image img {
+  width: 100% !important;
+  height: 100% !important;
+
+  display: block !important;
+
+  object-fit: cover !important;
+  object-position: center !important;
+
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .drink-image {
+    width: 65px !important;
+    height: 65px !important;
+    min-width: 65px !important;
+  }
+}
+/* ===== DRINKS LEFT SIDE GAP FIX ===== */
+
+.drink-split {
+  align-items: start !important;
+}
+
+.drink-intro {
+  align-self: start !important;
+  height: fit-content !important;
+  min-height: 0 !important;
+}
+/* ===== DRINKS LEFT SIDE - NO HERO IMAGE ===== */
+
+.drink-split {
+  align-items: start !important;
+}
+
+.drink-intro {
+  min-height: 0 !important;
+  height: fit-content !important;
+  align-self: start !important;
+  padding: 25px !important;
+}
+
+/* Heading ko bilkul top par rakho */
+.drink-intro > span {
+  margin-top: 0 !important;
+}
+
+.drink-intro h2 {
+  margin-top: 8px !important;
+}
+
+.drink-intro p {
+  margin-bottom: 20px !important;
+}
+
+/* Purani hero image ko completely hide */
+.drink-hero-image {
+  display: none !important;
+}
+/* ================= DRINKS FULL WIDTH ================= */
+
+.drinks-section {
+  width: 100%;
+}
+
+.drinks-section .menu-category-heading {
+  width: 100%;
+  margin-bottom: 35px;
+}
+
+.drink-list {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.drink-item {
+  width: 100%;
+  min-height: 105px;
+
+  display: grid;
+  grid-template-columns: 85px 1fr auto;
+  align-items: center;
+
+  gap: 18px;
+  padding: 12px;
+
+  background: #151515;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+}
+
+.drink-image {
+  width: 85px !important;
+  height: 85px !important;
+  min-width: 85px !important;
+
+  padding: 0 !important;
+  overflow: hidden !important;
+
+  border-radius: 14px;
+  background: #111;
+
+  opacity: 1 !important;
+}
+
+.drink-image img {
+  width: 100% !important;
+  height: 100% !important;
+
+  display: block !important;
+
+  object-fit: cover !important;
+  object-position: center;
+
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+.drink-item h3 {
+  margin: 0 0 5px;
+  font-size: 18px;
+}
+
+.drink-item p {
+  margin: 0;
+  font-size: 12px;
+  font-style: italic;
+  opacity: .55;
+}
+
+.drink-item strong {
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+  .drink-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+
+  .drink-item {
+    grid-template-columns: 70px 1fr auto;
+    gap: 12px;
+    min-height: 90px;
+  }
+
+  .drink-image {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+  }
+
+  .drink-item h3 {
+    font-size: 16px;
+  }
+
+  .drink-item p {
+    font-size: 10px;
+  }
+
+  .drink-item strong {
+    font-size: 16px;
+  }
+}
+/* ===== DRINK CARDS BIGGER ===== */
+
+.drink-item {
+  min-height: 125px !important;
+  padding: 16px !important;
+  gap: 22px !important;
+}
+
+.drink-image {
+  width: 100px !important;
+  height: 100px !important;
+  min-width: 100px !important;
+}
+
+.drink-item h3 {
+  font-size: 20px !important;
+}
+
+.drink-item p {
+  font-size: 13px !important;
+}
+
+.drink-item strong {
+  font-size: 20px !important;
+}
+
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 500px) {
+
+  .drink-item {
+    min-height: 105px !important;
+    padding: 12px !important;
+  }
+
+  .drink-image {
+    width: 80px !important;
+    height: 80px !important;
+    min-width: 80px !important;
+  }
+}
+
+/* ================= SAUCE SECTION FINAL FIX ================= */
+
+.sauce-item {
+  position: relative !important;
+  min-height: 170px !important;
+  padding: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 22px !important;
+}
+
+/* IMAGE */
+.sauce-icon {
+  position: relative !important;
+
+  width: 145px !important;
+  height: 145px !important;
+  min-width: 145px !important;
+
+  padding: 0 !important;
+  overflow: hidden !important;
+
+  border-radius: 18px !important;
+
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* ACTUAL IMAGE */
+.sauce-icon img {
+  width: 100% !important;
+  height: 100% !important;
+
+  display: block !important;
+
+  object-fit: cover !important;
+  object-position: center !important;
+
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+/* NUMBER — IMAGE KE CENTER SE HATA DIYA */
+.sauce-icon span {
+  position: absolute !important;
+
+  top: 8px !important;
+  left: 8px !important;
+
+  bottom: auto !important;
+  right: auto !important;
+
+  z-index: 10 !important;
+
+  width: 30px !important;
+  height: 30px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 50% !important;
+
+  background: rgba(0,0,0,.78) !important;
+  color: #fff !important;
+
+  font-size: 11px !important;
+  font-weight: 700 !important;
+
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* SAUCE NAME */
+.sauce-item h3 {
+  margin: 0 0 5px !important;
+}
+
+/* ENGLISH NAME */
+.sauce-item p {
+  margin: 0 !important;
+}
+
+/* PRICE */
+.sauce-item strong {
+  margin-left: auto !important;
+  white-space: nowrap !important;
+  font-size: 18px !important;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 700px) {
+
+  .sauce-item {
+    min-height: 135px !important;
+    padding: 12px !important;
+    gap: 15px !important;
+  }
+
+  .sauce-icon {
+    width: 105px !important;
+    height: 105px !important;
+    min-width: 105px !important;
+  }
+
+  .sauce-icon span {
+    width: 27px !important;
+    height: 27px !important;
+
+    top: 6px !important;
+    left: 6px !important;
+
+    font-size: 10px !important;
+  }
+
+  .sauce-item h3 {
+    font-size: 16px !important;
+  }
+
+  .sauce-item strong {
+    font-size: 16px !important;
+  }
+}
+/* =========================================================
+   FINAL PROFESSIONAL FOOTER LAYOUT
+========================================================= */
+
+.site-footer {
+  width: 100%;
+  margin-top: 80px;
+  background: #0b0b0b;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+
+/* ================= MAIN FOOTER ================= */
+
+.footer-main {
+  width: min(1200px, 90%);
+  margin: 0 auto;
+
+  padding: 65px 0 55px;
+
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.4fr;
+
+  gap: 55px;
+
+  align-items: start;
+}
+
+
+/* ================= BRAND ================= */
+
+.footer-brand {
+  width: 100%;
+  max-width: 300px;
+
+  text-align: left;
+}
+
+.footer-logo {
+  width: 135px;
+  height: auto;
+
+  display: block;
+
+  margin: 0 0 22px;
+}
+
+.footer-brand > p {
+  margin: 0 0 25px;
+
+  color: rgba(255,255,255,.52);
+
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+
+/* ================= SOCIAL ================= */
+
+.footer-socials {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  gap: 10px;
+}
+
+.footer-socials a {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 50%;
+
+  color: #eee;
+  text-decoration: none;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  transition: .25s ease;
+}
+
+.footer-socials a:hover {
+  background: #b8b8bd;
+  border-color: #b8b8bd;
+  color: #111;
+
+  transform: translateY(-3px);
+}
+
+
+/* ================= COLUMNS ================= */
+
+.footer-column,
+.footer-contact {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  text-align: left;
+}
+
+.footer-column h3,
+.footer-contact h3 {
+  position: relative;
+
+  margin: 0 0 25px;
+
+  padding-bottom: 10px;
+
+  color: #fff;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.footer-column h3::after,
+.footer-contact h3::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  bottom: 0;
+
+  width: 32px;
+  height: 2px;
+
+  background: #b8b8bd;
+}
+
+
+/* LINKS */
+
+.footer-column {
+  gap: 12px;
+}
+
+.footer-column a {
+  display: block;
+
+  color: rgba(255,255,255,.52);
+
+  font-size: 13px;
+
+  text-decoration: none;
+
+  transition: .25s ease;
+}
+
+.footer-column a:hover {
+  color: #b8b8bd;
+  transform: translateX(4px);
+}
+
+
+/* ================= CONTACT ================= */
+
+.contact-item {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  margin-bottom: 16px;
+}
+
+.contact-item span {
+  width: 20px;
+
+  flex-shrink: 0;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.contact-item p {
+  margin: 0;
+
+  color: rgba(255,255,255,.52);
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.contact-item a{transition:.2s ease}
+.contact-item a:hover p{color:var(--accent-2)}
+
+
+/* ================= MAP ================= */
+
+.footer-map {
+  width: min(1200px, 90%);
+  height: 230px;
+
+  margin: 0 auto 45px;
+
+  overflow: hidden;
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(255,255,255,.09);
+
+  background: #151515;
+}
+
+.footer-map iframe {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  border: 0;
+
+  filter: grayscale(1) brightness(.55) contrast(1.1);
+}
+
+
+/* ================= BOTTOM ================= */
+
+.footer-bottom {
+  width: min(1200px, 90%);
+
+  margin: 0 auto;
+
+  padding: 22px 0;
+
+  border-top: 1px solid rgba(255,255,255,.08);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.footer-bottom p {
+  margin: 0;
+
+  color: rgba(255,255,255,.38);
+
+  font-size: 12px;
+}
+
+.footer-bottom strong {
+  color: #b8b8bd;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 45px 35px;
+  }
+
+  .footer-brand {
+    max-width: 100%;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .footer-main {
+    width: 88%;
+
+    grid-template-columns: 1fr;
+
+    gap: 38px;
+
+    padding: 50px 0 40px;
+  }
+
+  .footer-brand {
+    max-width: 100%;
+  }
+
+  .footer-logo {
+    width: 115px;
+  }
+
+  .footer-map {
+    width: 88%;
+    height: 190px;
+
+    margin-bottom: 30px;
+
+    border-radius: 14px;
+  }
+
+  .footer-bottom {
+    width: 88%;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    text-align: center;
+
+    gap: 8px;
+  }
+}
+.footer-socials a i {
+  font-size: 15px;
+}
+
+.footer-socials a:hover i {
+  transform: scale(1.1);
+}
+.footer-socials a i {
+  font-size: 15px;
+}
+
+.footer-socials a:hover i {
+  transform: scale(1.1);
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+
+  <div class="bg-art" aria-hidden="true">
+    <img src="images/bgheroimg.png" alt="">
+  </div>
+
+  <div class="bg-wash" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <nav>
+    <div class="logo">
+      <span class="logo-badge"><img src="images/logo.png" alt="Burger Shop logo"></span>
+      <span>
+        HATABA BURGER
+        <small>حطبة برجر</small>
+      </span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#home" class="active">Home<span class="ar">الرئيسية</span></a></li>
+      <li><a href="#menu">Menu<span class="ar">القائمة</span></a></li>
+      <li class="nav-item" id="productsDropdown">
+        <a href="#products" onclick="toggleProductsDropdown(event)">Products<span class="ar">المنتجات</span></a>
+        <div class="dropdown-menu" id="productsMenu">
+          <a href="#beef-burger">𝐁𝐄𝐄𝐅 𝐁𝐔𝐑𝐆𝐄𝐑<span class="ar">برجر لحم</span></a>
+          <a href="#chicken-burger">𝐂𝐇𝐈𝐂𝐊𝐄𝐍 𝐁𝐔𝐑𝐆𝐄𝐑<span class="ar">برجر دجاج</span></a>
+          <a href="#fries">𝐅𝐑𝐈𝐄𝐒<span class="ar">فرايز</span></a>
+          <a href="#appetizers">𝐀𝐏𝐏𝐄𝐓𝐈𝐙𝐄𝐑𝐒<span class="ar">المقبلات</span></a>
+          <a href="#sauces">𝐒𝐀𝐔𝐂𝐄<span class="ar">الصوصات</span></a>
+          <a href="#additions">𝐀𝐃𝐃𝐈𝐓𝐈𝐎𝐍<span class="ar">الأضافات</span></a>
+          <a href="#drinks">𝐃𝐑𝐈𝐍𝐊𝐒<span class="ar">المشروبات</span></a>
+        </div>
+      </li>
+      <li><a href="#drinks">Shop<span class="ar">تسوق</span></a></li>
+    </ul>
+    <div class="nav-icons">
+      <button class="filled" aria-label="Search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button aria-label="Account">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      </button>
+      <button aria-label="Cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      </button>
+      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#" class="active" onclick="toggleMobileMenu()">Home <span class="ar">الرئيسية</span></a>
+    <a href="#menu" onclick="toggleMobileMenu()">Menu <span class="ar">القائمة</span></a>
+
+    <div class="mobile-products" id="mobileProducts">
+      <button type="button" class="mobile-products-toggle" onclick="toggleMobileProducts(event)" aria-expanded="false">
+        <span>Products <span class="ar">المنتجات</span></span>
+        <span class="dropdown-arrow">⌄</span>
+      </button>
+
+      <div class="mobile-dropdown-menu">
+        <a href="#beef-burger" onclick="toggleMobileMenu()">𝐁𝐄𝐄𝐅 𝐁𝐔𝐑𝐆𝐄𝐑 <span class="ar">برجر لحم</span></a>
+        <a href="#chicken-burger" onclick="toggleMobileMenu()">𝐂𝐇𝐈𝐂𝐊𝐄𝐍 𝐁𝐔𝐑𝐆𝐄𝐑 <span class="ar">برجر دجاج</span></a>
+        <a href="#fries" onclick="toggleMobileMenu()">𝐅𝐑𝐈𝐄𝐒 <span class="ar">فرايز</span></a>
+        <a href="#appetizers" onclick="toggleMobileMenu()">𝐀𝐏𝐏𝐄𝐓𝐈𝐙𝐄𝐑𝐒 <span class="ar">المقبلات</span></a>
+        <a href="#sauces" onclick="toggleMobileMenu()">𝐒𝐀𝐔𝐂𝐄 <span class="ar">الصوصات</span></a>
+        <a href="#additions" onclick="toggleMobileMenu()">𝐀𝐃𝐃𝐈𝐓𝐈𝐎𝐍 <span class="ar">الأضافات</span></a>
+        <a href="#drinks" onclick="toggleMobileMenu()">𝐃𝐑𝐈𝐍𝐊𝐒 <span class="ar">المشروبات</span></a>
+      </div>
+    </div>
+
+    <a href="#drinks" onclick="toggleMobileMenu()">Shop <span class="ar">تسوق</span></a>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-copy">
+      <div class="eyebrow">Handcrafted • Flame Grilled <span class="ar">مصنوع يدوياً • مشوي على النار</span></div>
+      <h1>REAL FLAVOR, WOOD &amp; FIRE
+        <span class="ar-line">نكهة حقيقية من الخشب والنار</span>
+      </h1>
+      <p class="sub">
+        Welcome to our burger paradise, where every bite is a journey into flavor perfection.
+        <span class="ar">أهلاً بكم في جنة البرجر، حيث كل قضمة رحلة نحو النكهة المثالية.</span>
+      </p>
+      <div class="cta-row">
+        <button class="btn-primary">Order Now <span class="ar">اطلب الآن</span></button>
+        <button class="btn-link">View Menu <span class="ar">عرض القائمة</span></button>
+      </div>
+      <div class="hero-meta">
+        <span>★ <strong>4.9/5</strong> customer rating <span class="ar">تقييم العملاء</span></span>
+        <span>● Fresh every day <span class="ar">طازج يومياً</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="thumbs">
+    <div class="thumb">
+      <img src="images/𝐵𝐵𝑄 𝑊𝐼𝑁𝐺𝑆.png" alt="Flame-grilled burger">
+    </div>
+    <div class="thumb">
+      <img src="images/𝑃𝐼𝐶𝐾𝐿𝐸.png" alt="Classic stacked burger">
+    </div>
+    <div class="thumb active">
+      <img src="images/𝐵𝐸𝐸𝐹 𝐹𝑅𝐼𝐸𝑆 𝐻𝐴𝑇𝐴𝐵𝐴.png" alt="Signature dripping burger">
+    </div>
+    <div class="thumb">
+      <img src="images/𝐶𝐻𝐸𝐸𝑆𝐸 𝑆𝐴𝑈𝐶𝐸.png" alt="Cheeseburger">
+    </div>
+    <div class="thumb">
+      <img src="images/𝐶𝑅𝐼𝑆𝑃𝑌 𝐶𝐻𝐼𝐶𝐾𝐸𝑁.png" alt="Double stack burger">
+    </div>
+  </div>
+
+</section>
+
+<section class="products" id="menu">
+  <div class="products-head">
+    <div>
+      <div class="section-kicker">The menu <span class="ar-sub">القائمة</span></div>
+      <h2>Our New Products <span class="ar-sub" style="font-size:.5em">منتجاتنا الجديدة</span></h2>
+      <p>Six signature builds, each stacked with its own personality — scroll through and pick tonight's craving.<span class="ar-sub">ست تشكيلات مميزة، لكل منها طابعها الخاص — تصفح واختر ما تشتهيه الليلة.</span></p>
+    </div>
+    <div class="scroll-controls">
+      <button class="scroll-btn" id="scrollLeft" aria-label="Scroll left">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="scroll-btn" id="scrollRight" aria-label="Scroll right">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="products-track" id="productsTrack">
+
+    <article class="product-card">
+      <div class="product-media">
+        <span class="product-tag tag-bestseller" title="الأكثر مبيعاً">Bestseller</span>
+        <img src="images/samash truffel.png" alt="Classic 𝑇𝑅𝑈𝐹𝐹𝐿𝐸 𝐹𝑅𝐼𝐸𝑆">
+      </div>
+      <div class="product-body">
+        <h3>𝑆𝑀𝐴𝑆𝐻 𝑇𝑅𝑈𝐹𝐹𝐿𝐸
+ <span class="ar-sub" style="font-size:.55em">فراسماش ترافل</span></h3>
+        <p> 90g Angus Beef • Smashed on the griddle • Cheddar •<span class="ar-sub">قطعتان من اللحم المشوي، جبن أمريكي، مخلل وصلصة خاصة على خبز محمص.</span></p>
+        <div class="product-foot">
+          <span class="product-price">ر.س 8.90</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="product-card">
+      <div class="product-media">
+        <span class="product-tag tag-spicy" title="حار">Spicy</span>
+        <img src="images/Hatabatrufal ofrmene.png" alt="Jalapeño Fire Burger">
+      </div>
+      <div class="product-body">
+        <h3> 𝐻𝐴𝑇𝐴𝐵𝐴 𝑇𝑅𝑈𝐹𝐹𝐿𝐸 <span class="ar-sub" style="font-size:.55em">حطبه ترافل</span></h3>
+        <p>| 90g Angus Beef • Cheddar • Caramelized Onions • Truffle Sauce<span class="ar-sub">90g لحم أنجوس • جبن شيدر • بصل مكرمل • صوص ترافل |</span></p>
+        <div class="product-foot">
+          <span class="product-price">ر.س 25</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="product-card">
+      <div class="product-media">
+        <span class="product-tag tag-new" title="جديد">New</span>
+        <img src="images/Royalgreen.jpeg" alt="Royal green">
+      </div>
+      <div class="product-body">
+        <h3>𝑅𝑂𝑌𝐴𝐿 𝐺𝑅𝐸𝐸𝑁 <span class="ar-sub" style="font-size:.55em">رويال قرين</span></h3>
+        <p>resh lettuce and arugula with apple, pomegranate, raisins, parmesan, and walnuts<span class="ar-sub">خس وجرجير طازج مع التفاح والرمان والزبيب ، يكتمل مذاقها بجبنة البارميزان وعين</span></p>
+        <div class="product-foot">
+          <span class="product-price">ر.س 10.20</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- <article class="product-card">
+      <div class="product-media">
+        <span class="product-tag tag-classic">Classic</span>
+        <img src="images/product-4.jpg" alt="Mushroom Swiss Burger">
+      </div>
+      <div class="product-body">
+        <h3>Mushroom Swiss</h3>
+        <p>Sautéed mushrooms, melted swiss and garlic aioli on a brioche bun.</p>
+        <div class="product-foot">
+          <span class="product-price">ر.س 9.10</span>
+        </div>
+      </div>
+    </article> -->
+
+    <!-- <article class="product-card">
+      <div class="product-media">
+        <span class="product-tag tag-limited">Limited</span>
+        <img src="images/product-5.jpg" alt="Triple Cheese Burger">
+      </div>
+      <div class="product-body">
+        <h3>Triple Cheese</h3>
+        <p>A trio of cheddar, mozzarella and pepper jack over a juicy double patty.</p>
+        <div class="product-foot">
+          <span class="product-price">ر.س 11.40</span>
+        </div>
+      </div>
+    </article> -->
+
+    <article class="product-card">
+      <div class="product-media">
+        <span class="product-tag tag-veg" title="نباتي">Veggie</span>
+        <img src="images/truffelfreins.png" alt="Truffle Fries">
+      </div>
+      <div class="product-body">
+        <h3> 𝑇𝑅𝑈𝐹𝐹𝐿𝐸 𝐹𝑅𝐼𝐸𝑆 <span class="ar-sub" style="font-size:.55em">فيجي ديلوكس</span></h3>
+        <p> French Fries • Creamy Truffle Sauce • Caramelized Onions • Parmesan Cheese.<span class="ar-sub">فرايز مقلية • صوص ترافل كريمي • بصل مكرمل • جبن بارميزان</span></p>
+        <div class="product-foot">
+          <span class="product-price">ر.س 8.60</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<script>
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuButton = document.querySelector('.menu-toggle');
+
+  function toggleMobileMenu(){
+    const isOpen = mobileMenu.classList.toggle('open');
+    menuButton?.setAttribute('aria-expanded', String(isOpen));
+    menuButton?.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+  }
+
+  document.addEventListener('click', (event) => {
+    if (!mobileMenu || !menuButton) return;
+    if (mobileMenu.classList.contains('open') &&
+        !mobileMenu.contains(event.target) &&
+        !menuButton.contains(event.target)) {
+      mobileMenu.classList.remove('open');
+      menuButton.setAttribute('aria-expanded','false');
+      menuButton.setAttribute('aria-label','Open menu');
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mobileMenu?.classList.contains('open')) {
+      mobileMenu.classList.remove('open');
+      menuButton?.setAttribute('aria-expanded','false');
+      menuButton?.setAttribute('aria-label','Open menu');
+    }
+  });
+
+  // Mobile Products dropdown
+  function toggleMobileProducts(event){
+    event.preventDefault();
+    event.stopPropagation();
+
+    const wrapper = document.getElementById('mobileProducts');
+    const toggle = wrapper?.querySelector('.mobile-products-toggle');
+    if (!wrapper) return;
+
+    const isOpen = wrapper.classList.toggle('open');
+    toggle?.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  // Products Dropdown Toggle for Desktop
+  function toggleProductsDropdown(event){
+    if (window.innerWidth > 820) {
+      // On desktop, use hover - prevent default is handled by onclick
+      event.preventDefault();
+      return;
+    }
+    // On mobile/tablet, toggle the dropdown
+    event.preventDefault();
+    const dropdown = document.getElementById('productsDropdown');
+    dropdown.classList.toggle('active');
+  }
+
+  // Close mobile Products dropdown when clicking outside it
+  document.addEventListener('click', (event) => {
+    const wrapper = document.getElementById('mobileProducts');
+    if (!wrapper) return;
+    if (!wrapper.contains(event.target)) {
+      wrapper.classList.remove('open');
+      wrapper.querySelector('.mobile-products-toggle')?.setAttribute('aria-expanded','false');
+    }
+  });
+
+  // Close dropdown when clicking on a link
+  const productsMenu = document.getElementById('productsMenu');
+  if (productsMenu) {
+    const links = productsMenu.querySelectorAll('a');
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        const dropdown = document.getElementById('productsDropdown');
+        dropdown.classList.remove('active');
+      });
+    });
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (event) => {
+    const dropdown = document.getElementById('productsDropdown');
+    const productsLink = dropdown?.querySelector('a');
+    
+    // Only close if clicking outside the dropdown and not on the products link
+    if (dropdown && 
+        !dropdown.contains(event.target) && 
+        !productsLink?.contains(event.target)) {
+      dropdown.classList.remove('active');
+    }
+  });
+
+  const track = document.getElementById('productsTrack');
+  const left = document.getElementById('scrollLeft');
+  const right = document.getElementById('scrollRight');
+
+  function scrollProducts(direction){
+    if (!track) return;
+
+    // On desktop the cards are a grid, so there is nothing to scroll.
+    if (window.innerWidth > 900) return;
+
+    const card = track.querySelector('.product-card');
+    const gap = parseFloat(getComputedStyle(track).gap) || 13;
+    const amount = (card?.getBoundingClientRect().width || window.innerWidth - 32) + gap;
+
+    track.scrollBy({
+      left: direction * amount,
+      behavior:'smooth'
+    });
+  }
+
+  left?.addEventListener('click', () => scrollProducts(-1));
+  right?.addEventListener('click', () => scrollProducts(1));
+
+  // Keep mobile menu closed if the viewport becomes desktop-sized.
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 820 && mobileMenu?.classList.contains('open')) {
+      mobileMenu.classList.remove('open');
+      menuButton?.setAttribute('aria-expanded','false');
+      menuButton?.setAttribute('aria-label','Open menu');
+    }
+
+    if (window.innerWidth > 820) {
+      const mobileProducts = document.getElementById('mobileProducts');
+      mobileProducts?.classList.remove('open');
+      mobileProducts?.querySelector('.mobile-products-toggle')?.setAttribute('aria-expanded','false');
+    }
+  });
+
+
+  /* Mobile product cards: automatic scrolling + pause while user interacts */
+  (() => {
+    const carousel = document.getElementById('productsTrack');
+    if (!carousel) return;
+
+    let autoTimer = null;
+    let resumeTimer = null;
+    let userInteracting = false;
+
+    const mobile = () => window.matchMedia('(max-width: 600px)').matches;
+
+    function stepSize() {
+      const card = carousel.querySelector('.product-card');
+      if (!card) return 0;
+      const gap = parseFloat(getComputedStyle(carousel).gap) || 0;
+      return card.getBoundingClientRect().width + gap;
+    }
+
+    function stopAuto() {
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+    }
+
+    function startAuto() {
+      stopAuto();
+      if (!mobile() || userInteracting) return;
+
+      autoTimer = setInterval(() => {
+        if (userInteracting || !mobile()) return;
+
+        const step = stepSize();
+        const max = carousel.scrollWidth - carousel.clientWidth;
+
+        if (step <= 0 || max <= 2) return;
+
+        // Loop smoothly back to the first card after the last card.
+        if (carousel.scrollLeft >= max - 8) {
+          carousel.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          carousel.scrollBy({ left: step, behavior: 'smooth' });
+        }
+      }, 2500);
+    }
+
+    function pauseForUser() {
+      userInteracting = true;
+      stopAuto();
+
+      if (resumeTimer) clearTimeout(resumeTimer);
+    }
+
+    function resumeAfterTouch() {
+      if (resumeTimer) clearTimeout(resumeTimer);
+
+      // Let the user finish swiping/reading. Resume after 4 seconds of no touch.
+      resumeTimer = setTimeout(() => {
+        userInteracting = false;
+        startAuto();
+      }, 4000);
+    }
+
+    // Touch: pause immediately, and resume only after the user has stopped touching.
+    carousel.addEventListener('touchstart', pauseForUser, { passive: true });
+    carousel.addEventListener('touchmove', pauseForUser, { passive: true });
+    carousel.addEventListener('touchend', resumeAfterTouch, { passive: true });
+    carousel.addEventListener('touchcancel', resumeAfterTouch, { passive: true });
+
+    // Pointer support for mobile browsers and mouse dragging.
+    carousel.addEventListener('pointerdown', pauseForUser, { passive: true });
+    carousel.addEventListener('pointerup', resumeAfterTouch, { passive: true });
+    carousel.addEventListener('pointercancel', resumeAfterTouch, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAuto();
+      } else if (!userInteracting) {
+        startAuto();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (mobile() && !userInteracting) {
+        startAuto();
+      } else if (!mobile()) {
+        stopAuto();
+      }
+    });
+
+    // Center the first card when the mobile carousel initializes.
+    if (mobile()) {
+      const firstCard = carousel.querySelector('.product-card');
+      if (firstCard) {
+        firstCard.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    // Start automatically on mobile.
+    startAuto();
+  })();
+
+</script>
+
+
+<!-- ================= BEEF BURGER SECTION ================= -->
+<section class="beef-section" id="beef-burger">
+  <div class="beef-heading">
+    <span class="beef-kicker">SPECIAL MENU <span class="ar-sub">قائمة خاصة</span></span>
+    <h2>برجر لحم | 𝐁𝐄𝐄𝐅 𝐁𝐔𝐑𝐆𝐄𝐑</h2>
+    <p>Rich, juicy &amp; flame-grilled beef burgers crafted for true burger lovers.<span class="ar-sub">برجر لحم غني وعصيري ومشوي على النار لعشاق البرجر الحقيقيين.</span></p>
+  </div>
+
+  <div class="beef-grid">
+    <article class="beef-card">
+      <div class="beef-image">
+        <!-- <div class="beef-placeholder">SMASH<br><small>BEEF</small></div> -->
+        <!-- Later replace the placeholder with: -->
+        <img src="images/𝑆𝑀𝐴𝑆𝐻 𝐵𝐸𝐸𝐹.png" alt="سماش بيف | SMASH BEEF">
+       
+        <span class="beef-badge">BEEF</span>
+      </div>
+      <div class="beef-info">
+        <span class="beef-number">01</span>
+        <h3>سماش بيف</h3>
+        <h4>𝑆𝑀𝐴𝑆𝐻 𝐵𝐸𝐸</h4>
+        <p>Juicy smashed beef patty with a rich, crispy edge and premium toppings.<span class="ar-sub">قطعة لحم مطحونة وعصيرية بحواف مقرمشة وإضافات فاخرة.</span></p>
+        <div class="beef-bottom">
+          <strong>ر.س 299</strong>
+        </div>
+      </div>
+    </article>
+
+    <article class="beef-card">
+      <div class="beef-image">
+        <!-- <div class="beef-placeholder">HATABA<br><small>BEEF</small></div> -->
+        <!-- Later replace the placeholder with: -->
+        <img src="images/𝐻𝐴𝑇𝐴𝐵𝐴 𝐵𝐸𝐸𝐹.png" alt="حـطبه بيف | HATABA BEEF">
+       
+        <span class="beef-badge">BEEF</span>
+      </div>
+      <div class="beef-info">
+        <span class="beef-number">02</span>
+        <h3>حـطبه بيف</h3>
+        <h4>𝐻𝐴𝑇𝐴𝐵𝐴 𝐵𝐸𝐸𝐹</h4>
+        <p>Bold grilled beef, layered with signature sauce and fresh premium ingredients.<span class="ar-sub">لحم مشوي غني بالنكهة، مع صلصتنا الخاصة ومكونات طازجة فاخرة.</span></p>
+        <div class="beef-bottom">
+          <strong>ر.س 349</strong>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+<!-- ================= END BEEF BURGER SECTION ================= -->
+
+
+<!-- ================= CHICKEN BURGER SECTION ================= -->
+<section class="chicken-section" id="chicken-burger">
+  <div class="chicken-heading">
+    <span class="chicken-kicker">SPECIAL MENU <span class="ar-sub">قائمة خاصة</span></span>
+    <h2>تشيكن برقر | 𝐶𝐻𝐼𝐶𝐾𝐸𝑁 𝐵𝑈𝑅𝐺𝐸𝑅</h2>
+    <p>Crispy, juicy &amp; perfectly grilled chicken burgers made for every bite.<span class="ar-sub">برجر دجاج مقرمش وعصيري، مشوي بإتقان في كل قضمة.</span></p>
+  </div>
+
+  <div class="chicken-grid">
+    <article class="chicken-card">
+      <div class="chicken-image">
+        <!-- <div class="chicken-placeholder">CRISPY<br><small>CHICKEN</small></div> -->
+        
+        <img src="images/𝐶𝑅𝐼𝑆𝑃𝑌 𝐶𝐻𝐼𝐶𝐾𝐸𝑁.png" alt="كرسبي تشيكن | 𝐶𝑅𝐼𝑆𝑃𝑌 𝐶𝐻𝐼𝐶𝐾𝐸𝑁">
+       
+        <span class="chicken-badge">CHICKEN</span>
+      </div>
+      <div class="chicken-info">
+        <span class="chicken-number">01</span>
+        <h3>كرسبي تشيكن</h3>
+        <h4>𝐶𝑅𝐼𝑆𝑃𝑌 𝐶𝐻𝐼𝐶𝐾𝐸𝑁</h4>
+        <p>Crispy golden chicken with signature sauce and fresh premium toppings.<span class="ar-sub">دجاج ذهبي مقرمش مع صلصتنا الخاصة وإضافات طازجة فاخرة.</span></p>
+        <div class="chicken-bottom">
+          <strong>ر.س 279</strong>
+        </div>
+      </div>
+    </article>
+
+    <article class="chicken-card">
+      <div class="chicken-image">
+        <!-- <div class="chicken-placeholder">HATABA<br><small>CHICKEN</small></div> -->
+        <!-- Later replace with: -->
+        <img src="images/𝐻𝐴𝑇𝐴𝐵𝐴 𝐶𝐻𝐼𝐶𝐾𝐸𝑁.png" alt="حطبه تشيكن | 𝐻𝐴𝑇𝐴𝐵𝐴 𝐶𝐻𝐼𝐶𝐾𝐸𝑁">
+       
+        <span class="chicken-badge">CHICKEN</span>
+      </div>
+      <div class="chicken-info">
+        <span class="chicken-number">02</span>
+        <h3>حطبه تشيكن</h3>
+        <h4>𝐻𝐴𝑇𝐴𝐵𝐴 𝐶𝐻𝐼𝐶𝐾𝐸𝑁</h4>
+        <p>Signature chicken patty layered with creamy sauce and fresh ingredients.<span class="ar-sub">قطعة دجاج مميزة مع صلصة كريمية ومكونات طازجة.</span></p>
+        <div class="chicken-bottom">
+          <strong>ر.س 319</strong>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+<!-- ================= END CHICKEN BURGER SECTION ================= -->
+
+
+<!-- ================= FRIES SECTION ================= -->
+<section class="menu-category fries-section" id="fries">
+  <div class="menu-category-heading">
+    <span>CRISPY SIDES <span class="ar-sub">أطباق مقرمشة</span></span>
+    <h2>الفرايز | 𝐹𝑅𝐼𝐸𝑆</h2>
+    <p>Golden, crispy and made to complete your burger.<span class="ar-sub">ذهبية ومقرمشة، لتكمل طبق البرجر الخاص بك.</span></p>
+  </div>
+ <div class="menu-category-grid fries-grid">
+
+  <article class="menu-item-card fries-card">
+    <div class="menu-item-image">
+      <img src="images/𝐹𝑅𝐸𝑁𝐶𝐻 𝐹𝑅𝐼𝐸𝑆.png" alt="French Fries">
+      <span>01</span>
+    </div>
+    <div class="menu-item-content">
+      <h3>فرنش فرايز</h3>
+      <h4>𝐹𝑅𝐸𝑁𝐶𝐻 𝐹𝑅𝐼𝐸𝑆</h4>
+      <p>Classic golden fries, crispy outside and soft inside.<span class="ar-sub">فرايز ذهبية كلاسيكية، مقرمشة من الخارج وطرية من الداخل.</span></p>
+      <div><strong>ر.س 99</strong></div>
+    </div>
+  </article>
+
+  <article class="menu-item-card fries-card">
+    <div class="menu-item-image">
+      <img src="images/𝑆𝐸𝐴𝑆𝑂𝑁𝐷 𝐹𝑅𝐼𝐸𝑆.png" alt="Seasoned Fries">
+      <span>02</span>
+    </div>
+    <div class="menu-item-content">
+      <h3>فرايز مبهر</h3>
+      <h4>𝑆𝐸𝐴𝑆𝑂𝑁𝐷 𝐹𝑅𝐼𝐸𝑆</h4>
+      <p>Crunchy fries tossed in our signature seasoning.<span class="ar-sub">فرايز مقرمشة مع توابلنا الخاصة.</span></p>
+      <div><strong>ر.س 119</strong></div>
+    </div>
+  </article>
+
+  <article class="menu-item-card fries-card">
+    <div class="menu-item-image">
+      <img src="images/𝐶𝐻𝐸𝐸𝑆𝐸 𝐹𝑅𝐼𝐸𝑆.png" alt="Cheese Fries">
+      <span>03</span>
+    </div>
+    <div class="menu-item-content">
+      <h3>تشيز فرايز</h3>
+      <h4>𝐶𝐻𝐸𝐸𝑆𝐸 𝐹𝑅𝐼𝐸</h4>
+      <p>Crispy fries covered with rich, creamy cheese.<span class="ar-sub">فرايز مقرمشة مغطاة بجبن كريمي غني.</span></p>
+      <div><strong>ر.س 149</strong></div>
+    </div>
+  </article>
+
+  <article class="menu-item-card fries-card">
+    <div class="menu-item-image">
+      <img src="images/𝑆𝑊𝐸𝐸𝑇 𝐹𝑅𝐼𝐸𝑆.png" alt="Sweet Fries">
+      <span>04</span>
+    </div>
+    <div class="menu-item-content">
+      <h3>فرايز حلوه</h3>
+      <h4>𝑆𝑊𝐸𝐸𝑇 𝐹𝑅𝐼𝐸𝑆</h4>
+      <p>Sweet-style fries with a delicious signature finish.<span class="ar-sub">فرايز بنكهة حلوة ولمسة نهائية شهية.</span></p>
+      <div><strong>ر.س 129</strong></div>
+    </div>
+  </article>
+
+</div>
+</section>
+
+<!-- ================= APPETIZERS SECTION ================= -->
+<section class="menu-category appetizers-section" id="appetizers">
+  <div class="menu-category-heading">
+    <span>SHARE &amp; ENJOY <span class="ar-sub">شارك واستمتع</span></span>
+    <h2>الأطباق الجانبية | 𝐴𝑃𝑃𝐸𝑇𝑍𝐸𝑅𝑆</h2>
+    <p>Loaded sides and irresistible bites for the table.<span class="ar-sub">أطباق جانبية غنية ولقيمات لا تقاوم للمشاركة.</span></p>
+  </div>
+ <div class="menu-category-grid appetizers-grid"> 
+
+  <article class="menu-item-card appetizer-card">
+    <div class="menu-item-image">
+      <img src="images/𝐵𝐸𝐸𝐹 𝐹𝑅𝐼𝐸𝑆 𝐻𝐴𝑇𝐴𝐵𝐴.png" alt="Beef Fries Hataba">
+      <span>01</span>
+    </div>
+    <div class="menu-item-content">
+      <h3>بيف فرايز حطبه</h3>
+      <h4>𝐵𝐸𝐸𝐹 𝐹𝑅𝐼𝐸𝑆 𝐻𝐴𝑇𝐴𝐵</h4>
+      <p>Loaded fries topped with delicious beef and signature flavors.<span class="ar-sub">فرايز محملة بلحم شهي ونكهاتنا الخاصة.</span></p>
+      <div><strong>ر.س 189</strong></div>
+    </div>
+  </article>
+
+
+  <article class="menu-item-card appetizer-card">
+    <div class="menu-item-image">
+      <img src="images/𝐶𝐻𝐼𝐶𝐾𝐸𝑁 𝐹𝑅𝐼𝐸𝑆 𝐻𝐴𝑇𝐴𝐵𝐴.png" alt="Chicken Fries Hataba">
+      <span>02</span>
+    </div>
+    <div class="menu-item-content">
+      <h3>تشيكن فرايز حطبه</h3>
+      <h4>𝐶𝐻𝐼𝐶𝐾𝐸𝑁 𝐹𝑅𝐼𝐸𝑆 𝐻𝐴𝑇𝐴𝐵𝐴</h4>
+      <p>Crispy chicken layered over fries with signature sauce.<span class="ar-sub">دجاج مقرمش فوق الفرايز مع صلصتنا الخاصة.</span></p>
+      <div><strong>ر.س 179</strong></div>
+    </div>
+  </article>
+
+
+  <article class="menu-item-card appetizer-card featured-item">
+    <div class="menu-item-image">
+      <img src="images/𝑆𝑃𝐼𝐶𝐸𝐷 𝐶𝑂𝑅𝑁.png" alt="Spiced Corn">
+      <span>⭐ الأكثر مبي</span>
+    </div>
+    <div class="menu-item-content">
+      <h3>ذرة مبهرة</h3>
+      <h4>𝑆𝑃𝐼𝐶𝐸𝐷 𝐶𝑂𝑅𝑁</h4>
+      <p>Sweet corn tossed with our special blend of spices.<span class="ar-sub">ذرة حلوة مع مزيج خاص من التوابل.</span></p>
+      <div><strong>ر.س 99</strong></div>
+    </div>
+  </article>
+
+
+  <article class="menu-item-card appetizer-card">
+    <div class="menu-item-image">
+      <img src="images/𝐵𝐵𝑄 𝑊𝐼𝑁𝐺𝑆.png" alt="BBQ Wings">
+      <span>04</span>
+    </div>
+    <div class="menu-item-content">
+      <h3>أجنحة دجاج باربكيو</h3>
+      <h4>𝐵𝐵𝑄 𝑊𝐼𝑁𝐺𝑆</h4>
+      <p>Juicy chicken wings coated in smoky BBQ sauce.<span class="ar-sub">أجنحة دجاج عصيرية مغطاة بصلصة باربكيو مدخنة.</span></p>
+      <div><strong>ر.س 199</strong></div>
+    </div>
+  </article>
+
+</div>
+</section>
+
+<!-- ================= SAUCES SECTION ================= -->
+<section class="menu-category sauces-section" id="sauces">
+  <div class="sauce-panel">
+    <div class="menu-category-heading">
+      <span>MAKE IT YOURS <span class="ar-sub">اصنعها على ذوقك</span></span>
+      <h2>الصوصات | 𝑆𝐴𝑈𝐶</h2>
+      <p>Pick your favorite sauce and add extra flavor to every bite.<span class="ar-sub">اختر صوصك المفضل وأضف نكهة إضافية لكل قضمة.</span></p>
+    </div>
+  <div class="sauce-list">
+
+  <article class="sauce-item">
+    <div class="sauce-icon">
+      <img src="images/𝐻𝐴𝑇𝐴𝐵𝐴 𝑆𝐴𝑈𝐶𝐸.png" alt="Hataba Sauce">
+      <span>01</span>
+    </div>
+    <div><h3>صوص حطبه</h3><p>𝐻𝐴𝑇𝐴𝐵𝐴 𝑆𝐴𝑈𝐶𝐸</p></div>
+    <strong>ر.س 29</strong>
+  </article>
+
+  <article class="sauce-item">
+    <div class="sauce-icon">
+      <img src="images/𝑇𝑅𝑈𝐹𝐹𝐿𝐸 𝑆𝐴𝑈𝐶𝐸.png" alt="Truffle Sauce">
+      <span>02</span>
+    </div>
+    <div><h3>صوص ترافل</h3><p>𝑇𝑅𝑈𝐹𝐹𝐿𝐸 𝑆𝐴𝑈𝐶𝐸</p></div>
+    <strong>ر.س 39</strong>
+  </article>
+
+  <article class="sauce-item">
+    <div class="sauce-icon">
+      <img src="images/𝐶𝐻𝐸𝐸𝑆𝐸 𝑆𝐴𝑈𝐶𝐸.png" alt="Cheese Sauce">
+      <span>03</span>
+    </div>
+    <div><h3>صوص جبن</h3><p>𝐶𝐻𝐸𝐸𝑆𝐸 𝑆𝐴𝑈𝐶𝐸</p></div>
+    <strong>ر.س 29</strong>
+  </article>
+
+  <article class="sauce-item">
+    <div class="sauce-icon">
+      <img src="images/𝐶𝐿𝐴𝑆𝑆𝐼𝐶 𝑆𝐴𝑈𝐶𝐸.png" alt="Classic Sauce">
+      <span>04</span>
+    </div>
+    <div><h3>صوص كلاسيك</h3><p>𝐶𝐿𝐴𝑆𝑆𝐼𝐶 𝑆𝐴𝑈𝐶𝐸</p></div>
+    <strong>ر.س 19</strong>
+  </article>
+
+  <article class="sauce-item">
+    <div class="sauce-icon">
+      <img src="images/𝑅𝐴𝑁𝐶𝐻 𝑆𝐴𝑈𝐶𝐸.png" alt="Ranch Sauce">
+      <span>05</span>
+    </div>
+    <div><h3>صوص رانش</h3><p>𝑅𝐴𝑁𝐶𝐻 𝑆𝐴𝑈𝐶𝐸</p></div>
+    <strong>ر.س 29</strong>
+  </article>
+
+  <article class="sauce-item">
+    <div class="sauce-icon">
+      <img src="images/𝑆𝑃𝐼𝐶𝑌 𝑆𝐴𝑈𝐶𝐸.png" alt="Spicy Sauce">
+      <span>06</span>
+    </div>
+    <div><h3>صوص سبايسي</h3><p>𝑆𝑃𝐼𝐶𝑌 𝑆𝐴𝑈𝐶𝐸</p></div>
+    <strong>ر.س 29</strong>
+  </article>
+
+  <article class="sauce-item">
+    <div class="sauce-icon">
+      <img src="images/𝐵𝐵𝑄 𝑆𝐴𝑈𝐶𝐸.png" alt="Smoked BBQ Sauce">
+      <span>07</span>
+    </div>
+    <div><h3>صوص باربكيو مدخن</h3><p>𝐵𝐵𝑄 𝑆𝐴𝑈𝐶𝐸</p></div>
+    <strong>ر.س 29</strong>
+  </article>
+
+</div>
+  </div>
+</section>
+
+<!-- ================= ADDITIONS SECTION ================= -->
+<!-- ================= ADDITIONS SECTION ================= -->
+<section class="menu-category additions-section" id="additions">
+
+  <div class="menu-category-heading">
+    <span>EXTRA TOPPINGS <span class="ar-sub">إضافات إضافية</span></span>
+    <h2>الأضافات | 𝐴𝐷𝐷𝐼𝑇𝐼𝑂𝑁</h2>
+    <p>Build your perfect burger with an extra layer of flavor.<span class="ar-sub">اصنع برجرك المثالي بطبقة إضافية من النكهة.</span></p>
+  </div>
+
+  <div class="addition-grid">
+
+    <article class="addition-card">
+      <span>01</span>
+      <div class="addition-image">
+        <img src="images/𝐶𝐻𝐼𝐶𝐾𝐸𝑁 𝐹𝑅𝐼𝐸𝑆.png" alt="Chicken Slice">
+      </div>
+      <h3>شريحة دجاج</h3>
+      <p>𝐶𝐻𝐼𝐶𝐾𝐸𝑁 𝐹𝑅𝐼𝐸𝑆</p>
+      <strong>+ر.س 79</strong>
+    </article>
+
+    <article class="addition-card">
+      <span>02</span>
+      <div class="addition-image">
+        <img src="images/𝐵𝐸𝐸𝐹 𝑆𝐿𝐼𝐶𝐸.png" alt="Beef Slice">
+      </div>
+      <h3>شريحة لحم</h3>
+      <p>𝐵𝐸𝐸𝐹 𝑆𝐿𝐼𝐶𝐸</p>
+      <strong>+ر.س 99</strong>
+    </article>
+
+    <article class="addition-card">
+      <span>03</span>
+      <div class="addition-image">
+        <img src="images/𝐶𝐴𝑅𝐴𝑀𝐸𝐿𝐼𝑍𝐸𝐷 𝑂𝑁𝐼𝑂𝑁.png" alt="Caramelized Onion">
+      </div>
+      <h3>بصل مكرمل</h3>
+      <p>𝐶𝐴𝑅𝐴𝑀𝐸𝐿𝐼𝑍𝐸𝐷 𝑂𝑁𝐼𝑂𝑁</p>
+      <strong>+ر.س 29</strong>
+    </article>
+
+    <article class="addition-card">
+      <span>04</span>
+      <div class="addition-image">
+        <img src="images/𝐶𝐻𝐸𝐸𝑆𝐸 𝑆𝐿𝐼𝐶𝐸.png" alt="Cheese Slice">
+      </div>
+      <h3>شريحة جبن</h3>
+      <p>𝐶𝐻𝐸𝐸𝑆𝐸 𝑆𝐿𝐼𝐶𝐸</p>
+      <strong>+ر.س 29</strong>
+    </article>
+
+    <article class="addition-card">
+      <span>05</span>
+      <div class="addition-image">
+        <img src="images/𝐽𝐴𝑙𝐴𝑃𝐸𝑁.png" alt="Jalapeno">
+      </div>
+      <h3>الابينو</h3>
+      <p>𝐽𝐴𝐿𝐴𝑃𝐸𝑁𝑂</p>
+      <strong>+ر.س 19</strong>
+    </article>
+
+    <article class="addition-card">
+      <span>06</span>
+      <div class="addition-image">
+        <img src="images/𝑃𝐼𝐶𝐾𝐿𝐸.png" alt="Pickle">
+      </div>
+      <h3>مخلل</h3>
+      <p>𝑃𝐼𝐶𝐾𝐿𝐸</p>
+      <strong>+ر.س 19</strong>
+    </article>
+
+    <article class="addition-card">
+      <span>07</span>
+      <div class="addition-image">
+        <img src="images/𝐿𝐸𝑇𝑇𝑈𝐶𝐸.png" alt="Lettuce">
+      </div>
+      <h3>خس</h3>
+      <p>𝐿𝐸𝑇𝑇𝑈𝐶𝐸</p>
+      <strong>+ر.س 15</strong>
+    </article>
+
+  </div>
+</section>
+
+<!-- ================= DRINKS SECTION ================= -->
+<!-- ================= DRINKS SECTION ================= -->
+<section class="menu-category drinks-section" id="drinks">
+
+  <div class="menu-category-heading">
+    <span>REFRESH YOUR MEAL <span class="ar-sub">انعش وجبتك</span></span>
+
+    <h2>المشروبات | 𝐷𝑅𝐼𝑁𝐾𝑆</h2>
+
+    <p>Cool, refreshing drinks to pair with your favorite meal.<span class="ar-sub">مشروبات باردة ومنعشة لتقترن بوجبتك المفضلة.</span></p>
+  </div>
+
+
+  <div class="drink-list">
+
+    <article class="drink-item">
+      <div class="drink-image">
+        <img src="images/𝐶𝑂𝐿𝐴 𝐿𝐼𝐺𝐻.png" alt="Cola Light">
+      </div>
+      <div>
+        <h3>كولا لايت</h3>
+        <p>𝐶𝑂𝐿𝐴 𝐿𝐼𝐺𝐻𝑇</p>
+      </div>
+      <strong>ر.س 59</strong>
+    </article>
+
+    <article class="drink-item">
+      <div class="drink-image">
+        <img src="images/𝐶𝑂𝐿𝐴.png" alt="Cola">
+      </div>
+      <div>
+        <h3>كولا</h3>
+        <p>𝐶𝑂𝐿𝐴</p>
+      </div>
+      <strong>ر.س 59</strong>
+    </article>
+
+    <article class="drink-item">
+      <div class="drink-image">
+        <img src="images/𝑀𝐼𝑅𝐼𝑁𝐷𝐴.jpeg" alt="Mirinda">
+      </div>
+      <div>
+        <h3>مضيات</h3>
+        <p>𝑀𝐼𝑅𝐼𝑁𝐷𝐴</p>
+      </div>
+      <strong>ر.س 59</strong>
+    </article>
+
+    <article class="drink-item">
+      <div class="drink-image">
+        <img src="images/𝑆𝑃𝑅𝐼𝑇𝐸.png" alt="Sprite">
+      </div>
+      <div>
+        <h3>سبرايت</h3>
+        <p>𝑆𝑃𝑅𝐼𝑇𝐸</p>
+      </div>
+      <strong>ر.س 59</strong>
+    </article>
+
+    <article class="drink-item">
+      <div class="drink-image">
+        <img src="images/𝑆𝑃𝑅𝐼𝑁𝐺 𝐽𝑈𝐼𝐶.jpeg" alt="Spring Juice">
+      </div>
+      <div>
+        <h3>عصير ربيع</h3>
+        <p>𝑆𝑃𝑅𝐼𝑁𝐺 𝐽𝑈𝐼𝐶𝐸</p>
+      </div>
+      <strong>ر.س 79</strong>
+    </article>
+
+    <article class="drink-item">
+      <div class="drink-image">
+        <img src="images/𝑆𝑈𝑁 𝐶𝑂𝐿𝐴.jpeg" alt="Sun Cola">
+      </div>
+      <div>
+        <h3>سن كولا</h3>
+        <p>𝑆𝑈𝑁 𝐶𝑂𝐿𝐴</p>
+      </div>
+      <strong>ر.س 49</strong>
+    </article>
+
+    <article class="drink-item">
+      <div class="drink-image">
+        <img src="images/𝑊𝐴𝑇𝐸𝑅.jpeg" alt="Water">
+      </div>
+      <div>
+        <h3>ماء</h3>
+        <p>𝑊𝐴𝑇𝐸𝑅</p>
+      </div>
+      <strong>ر.س 29</strong>
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+<!-- ================= PROFESSIONAL FOOTER ================= -->
+<footer class="site-footer">
+
+  <div class="footer-main">
+
+    <!-- BRAND -->
+    <div class="footer-brand">
+      <img src="images/logo.png" alt="Burger Logo" class="footer-logo">
+
+      <p>
+        Crafted with passion, served with flavor.
+        Your ultimate destination for premium burgers.
+        <span class="ar-sub">صُنع بشغف، يُقدَّم بنكهة. وجهتك المثالية لأفضل البرجر.</span>
+      </p>
+
+  <div class="footer-socials">
+
+  <!-- Instagram -->
+  <a href="https://www.instagram.com/hataba.sa?stkn=ZWtzcDIxdXRpenRh" aria-label="Instagram">
+    <i class="fa-brands fa-instagram"></i>
+  </a>
+
+  <!-- TikTok -->
+  <a href="https://www.tiktok.com/@hataba.sa?_r=1&_t=ZS-99kzCnLII2k" aria-label="TikTok">
+    <i class="fa-brands fa-tiktok"></i>
+  </a>
+
+  <!-- Snapchat -->
+  <a href="https://www.snapchat.com/add/hataba.sa" aria-label="Snapchat">
+    <i class="fa-brands fa-snapchat"></i>
+  </a>
+
+  <!-- Google Maps Location -->
+  <a
+    href="https://maps.google.com/?q=Hataba+Burger,+3990+King+Abdul+Aziz+Rd,+Sabya+85298,+Saudi+Arabia"
+    target="_blank"
+    rel="noopener"
+    aria-label="Hataba Burger Location"
+  >
+    <i class="fa-solid fa-location-dot"></i>
+  </a>
+
+</div>
+    </div>
+
+
+    <!-- QUICK LINKS -->
+    <div class="footer-column">
+      <h3>Quick Links <span class="ar-sub">روابط سريعة</span></h3>
+
+      <a href="#home">Home <span class="ar-sub">الرئيسية</span></a>
+      <a href="#menu">Our Menu <span class="ar-sub">قائمتنا</span></a>
+      <a href="#beef-burger">Beef Burgers <span class="ar-sub">برجر لحم</span></a>
+      <a href="#chicken-burger">Chicken Burgers <span class="ar-sub">برجر دجاج</span></a>
+      <a href="#fries">Fries <span class="ar-sub">فرايز</span></a>
+      <a href="#drinks">Drinks <span class="ar-sub">مشروبات</span></a>
+    </div>
+
+
+    <!-- MENU -->
+    <div class="footer-column">
+      <h3>Our Menu <span class="ar-sub">قائمتنا</span></h3>
+
+      <a href="#beef-burger">Smash Beef <span class="ar-sub">سماش بيف</span></a>
+      <a href="#chicken-burger">Crispy Chicken <span class="ar-sub">كرسبي تشيكن</span></a>
+      <a href="#fries">French Fries <span class="ar-sub">فرنش فرايز</span></a>
+      <a href="#sauces">Sauces <span class="ar-sub">الصوصات</span></a>
+      <a href="#additions">Extra Toppings <span class="ar-sub">الأضافات</span></a>
+      <a href="#drinks">Refreshments <span class="ar-sub">المشروبات</span></a>
+    </div>
+
+
+    <!-- CONTACT -->
+    <div class="footer-contact">
+      <h3>Visit Us <span class="ar-sub">زوروا متجرنا</span></h3>
+
+      <div class="contact-item">
+        <span>📍</span>
+        <a href="PASTE_YOUR_GOOGLE_MAPS_LINK_HERE" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
+          <p>
+      Hataba Burger,<br>
+      3990 King Abdul Aziz Rd,<br>
+      Sabya 85298, Saudi Arabia
+      <span class="ar-sub">حطبة برجر، طريق الملك عبدالعزيز، صبيا، المملكة العربية السعودية</span>
+    </p>
+        </a>
+      </div>
+
+      <div class="contact-item">
+        <span>📞</span>
+        <p>+91 98765 43210</p>
+      </div>
+
+      <div class="contact-item">
+        <span>✉</span>
+        <p>hello@yourburger.com</p>
+      </div>
+
+      <div class="contact-item">
+        <span>🕐</span>
+        <p>Open Daily · 4 AM – 2PM <span class="ar-sub">مفتوح يومياً · 2 صباحاً – 4 مساءً</span></p>
+      </div>
+    </div>
+
+  </div>
+
+
+  
+
+
+  <!-- BOTTOM -->
+  <div class="footer-bottom">
+
+    <p>
+      © 2026 Your Burger. All Rights Reserved. <span class="ar-sub" style="display:inline;margin-top:0">جميع الحقوق محفوظة.</span>
+    </p>
+
+    <p>
+      Developed by <strong>Mohit Yadav</strong>
+    </p>
+
+  </div>
+
+</footer>
+
+<script>
+(() => {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return;
+
+  const sectionSelectors = [
+    '.products-section',
+    '.beef-section',
+    '.chicken-section',
+    '.menu-category',
+    '.menu-section',
+    '.fries-section',
+    '.appetizer-section',
+    '.sauce-section',
+    '.addition-section',
+    '.drinks-section',
+    'footer'
+  ];
+
+  const cardSelectors = [
+    '.product-card',
+    '.beef-card',
+    '.chicken-card',
+    '.menu-card',
+    '.sauce-card',
+    '.addition-card',
+    '.drink-card',
+    '.appetizer-card',
+    '.fries-card'
+  ];
+
+  const sections = [...new Set(
+    sectionSelectors.flatMap(sel => [...document.querySelectorAll(sel)])
+  )];
+
+  const cards = [...new Set(
+    cardSelectors.flatMap(sel => [...document.querySelectorAll(sel)])
+  )];
+
+  sections.forEach(el => el.classList.add('scroll-reveal'));
+  cards.forEach((el, i) => {
+    el.classList.add('scroll-reveal-card');
+    el.style.setProperty('--reveal-delay', `${(i % 4) * 70}ms`);
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  [...sections, ...cards].forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>
